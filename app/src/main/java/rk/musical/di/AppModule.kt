@@ -13,6 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import rk.musical.data.AlbumRepository
 import rk.musical.data.FavoriteRepository
+import rk.musical.data.LocalSongRepository
 import rk.musical.data.LyricRepository
 import rk.musical.data.MediaItemTreeImpl
 import rk.musical.data.SongRepository
@@ -64,7 +65,7 @@ object AppModule {
     @Provides
     fun provideSongRepository(
         @ApplicationContext context: Context
-    ) = SongRepository(context = context)
+    ): SongRepository = LocalSongRepository(context = context)
 
     @Singleton
     @Provides

@@ -61,7 +61,7 @@ fun SongsScreen(
 ) {
     val context = LocalContext.current
     val viewModel: SongsScreenViewModel = hiltViewModel()
-    val uiState = viewModel.uiState
+    val uiState: SongsScreenUiState by viewModel.uiState.collectAsStateWithLifecycle()
     val permissionState = rememberPermissionState(permission = mediaPermission)
     val playingSong = viewModel.playingSongFlow.collectAsStateWithLifecycle()
     val currentSong: () -> Song = remember {
@@ -72,9 +72,9 @@ fun SongsScreen(
         permissionState = permissionState,
         grantedContent = {
             LaunchedEffect(Unit) {
-                viewModel.refreshSongs()
+                viewModel.loadSongs()
             }
-            when (uiState) {
+            when (val state = uiState) {
                 SongsScreenUiState.Loading -> {
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -87,18 +87,19 @@ fun SongsScreen(
 
                 is SongsScreenUiState.Loaded -> {
                     val onSongClick: (Song) -> Unit = remember {
-                        { viewModel.playSong(uiState.songs.indexOf(it)) }
+                        { viewModel.playSong(state.songs.indexOf(it)) }
                     }
                     SongsList(
                         modifier = modifier,
-                        songs = uiState.songs.toImmutableList(),
+                        songs = state.songs.toImmutableList(),
                         contentPadding = contentPadding,
                         onSongClick = onSongClick,
                         playingSong = currentSong
                     )
                 }
 
-                else -> {}
+                SongsScreenUiState.Empty -> {
+                }
             }
         },
         rationalContent = {

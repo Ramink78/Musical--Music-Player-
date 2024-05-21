@@ -3,6 +3,7 @@ package rk.musical.ui.screen
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -74,31 +75,33 @@ fun SongsScreen(
             LaunchedEffect(Unit) {
                 viewModel.loadSongs()
             }
-            when (val state = uiState) {
-                SongsScreenUiState.Loading -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        LoadingCircle()
+            AnimatedContent(targetState = uiState, label = "") { state ->
+                when (state) {
+                    SongsScreenUiState.Loading -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            LoadingCircle()
+                        }
                     }
-                }
 
-                is SongsScreenUiState.Loaded -> {
-                    val onSongClick: (Song) -> Unit = remember {
-                        { viewModel.playSong(state.songs.indexOf(it)) }
+                    is SongsScreenUiState.Loaded -> {
+                        val onSongClick: (Song) -> Unit = remember {
+                            { viewModel.playSong(state.songs.indexOf(it)) }
+                        }
+                        SongsList(
+                            modifier = modifier,
+                            songs = state.songs.toImmutableList(),
+                            contentPadding = contentPadding,
+                            onSongClick = onSongClick,
+                            playingSong = currentSong
+                        )
                     }
-                    SongsList(
-                        modifier = modifier,
-                        songs = state.songs.toImmutableList(),
-                        contentPadding = contentPadding,
-                        onSongClick = onSongClick,
-                        playingSong = currentSong
-                    )
-                }
 
-                SongsScreenUiState.Empty -> {
+                    SongsScreenUiState.Empty -> {
+                    }
                 }
             }
         },

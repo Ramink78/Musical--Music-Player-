@@ -23,19 +23,6 @@ constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<SongsScreenUiState>(SongsScreenUiState.Loading)
     val uiState = _uiState.asStateFlow()
-//        flow {
-//        val loadedSongs = songRepository.loadSongs()
-//        if (loadedSongs.isEmpty()) {
-//            emit(SongsScreenUiState.Empty)
-//        } else {
-//            emit(SongsScreenUiState.Loaded(loadedSongs))
-//        }
-//    }.stateIn(
-//        scope = viewModelScope,
-//        started = SharingStarted.WhileSubscribed(5000),
-//        initialValue = SongsScreenUiState.Loading
-//
-//    )
 
     private var currentSongs = emptyList<Song>()
 
@@ -66,6 +53,7 @@ constructor(
             if (loadedSongs.isEmpty()) {
                 _uiState.update { SongsScreenUiState.Empty }
             } else {
+                currentSongs = loadedSongs
                 _uiState.update { SongsScreenUiState.Loaded(loadedSongs) }
             }
         }

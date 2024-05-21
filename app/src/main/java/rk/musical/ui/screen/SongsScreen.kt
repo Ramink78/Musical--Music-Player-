@@ -3,6 +3,7 @@ package rk.musical.ui.screen
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -61,7 +62,7 @@ fun SongsScreen(
 ) {
     val context = LocalContext.current
     val viewModel: SongsScreenViewModel = hiltViewModel()
-    val uiState = viewModel.uiState
+    val uiState: SongsScreenUiState by viewModel.uiState.collectAsStateWithLifecycle()
     val permissionState = rememberPermissionState(permission = mediaPermission)
     val playingSong = viewModel.playingSongFlow.collectAsStateWithLifecycle()
     val currentSong: () -> Song = remember {
@@ -72,33 +73,36 @@ fun SongsScreen(
         permissionState = permissionState,
         grantedContent = {
             LaunchedEffect(Unit) {
-                viewModel.refreshSongs()
+                viewModel.loadSongs()
             }
-            when (uiState) {
-                SongsScreenUiState.Loading -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        LoadingCircle()
+            AnimatedContent(targetState = uiState, label = "") { state ->
+                when (state) {
+                    SongsScreenUiState.Loading -> {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            LoadingCircle()
+                        }
+                    }
+
+                    is SongsScreenUiState.Loaded -> {
+                        val onSongClick: (Song) -> Unit = remember {
+                            { viewModel.playSong(state.songs.indexOf(it)) }
+                        }
+                        SongsList(
+                            modifier = modifier,
+                            songs = state.songs.toImmutableList(),
+                            contentPadding = contentPadding,
+                            onSongClick = onSongClick,
+                            playingSong = currentSong
+                        )
+                    }
+
+                    SongsScreenUiState.Empty -> {
                     }
                 }
-
-                is SongsScreenUiState.Loaded -> {
-                    val onSongClick: (Song) -> Unit = remember {
-                        { viewModel.playSong(uiState.songs.indexOf(it)) }
-                    }
-                    SongsList(
-                        modifier = modifier,
-                        songs = uiState.songs.toImmutableList(),
-                        contentPadding = contentPadding,
-                        onSongClick = onSongClick,
-                        playingSong = currentSong
-                    )
-                }
-
-                else -> {}
             }
         },
         rationalContent = {

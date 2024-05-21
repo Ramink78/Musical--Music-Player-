@@ -49,16 +49,15 @@ class MediaItemTreeImpl(
     private suspend fun initAlbumCategory() {
         val albumList = mutableListOf<MediaItem>()
         albumRepository.load()
-        songRepository.load()
         albumList.addAll(albumRepository.cachedAlbums.toMediaItems())
         albumRepository.cachedAlbums.forEach {
             idToMediaItem[it.id] = it.toMediaItem()
         }
-        songRepository.chacedSongs.forEach {
+        songRepository.loadSongs().forEach {
             idToMediaItem[it.id] = it.toMediaItem()
         }
         idToChildren[albumCategoryId] = albumList
-        val songsByAlbumId = songRepository.chacedSongs.groupBy { it.albumId }.mapValues {
+        val songsByAlbumId = songRepository.loadSongs().groupBy { it.albumId }.mapValues {
             it.value.toMediaItems().toMutableList()
         }
         idToChildren.putAll(songsByAlbumId)
@@ -82,6 +81,5 @@ class MediaItemTreeImpl(
 
     override suspend fun getMediaItem(mediaId: String): MediaItem? {
         return idToMediaItem[mediaId]
-
     }
 }

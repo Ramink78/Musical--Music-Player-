@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Album
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,6 +43,8 @@ import rk.musical.ui.RequiredMediaPermission
 import rk.musical.ui.component.AlbumPlaceholder
 import rk.musical.ui.mediaPermission
 import rk.musical.ui.theme.MusicalTheme
+import rk.musical.ui.theme.Purple40
+import rk.musical.ui.theme.PurpleGrey80
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -210,13 +215,13 @@ fun AlbumItem(
 
 @Composable
 fun LoadingCircle() {
-//    CircularProgressIndicator(
-//        strokeCap = StrokeCap.Round,
-//        trackColor = PurpleGrey80,
-//        color = Purple40,
-//        strokeWidth = 6.dp,
-//        modifier = Modifier.size(60.dp)
-//    )
+    CircularProgressIndicator(
+        strokeCap = StrokeCap.Round,
+        trackColor = PurpleGrey80,
+        color = Purple40,
+        strokeWidth = 6.dp,
+        modifier = Modifier.size(60.dp)
+    )
 }
 
 @Preview

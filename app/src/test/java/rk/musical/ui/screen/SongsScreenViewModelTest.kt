@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import rk.domain.SongsUseCase
 import rk.musical.data.SongRepository
 import rk.musical.data.model.Song
 import rk.musical.player.MusicalRemote
@@ -15,6 +16,7 @@ class SongsScreenViewModelTest {
     lateinit var viewModel: SongsScreenViewModel
     lateinit var mockedSongsRepository: SongRepository
     lateinit var mockedMusicalRemote: MusicalRemote
+    lateinit var mockedSongsUseCase: SongsUseCase
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
@@ -23,7 +25,8 @@ class SongsScreenViewModelTest {
     fun setup() {
         mockedSongsRepository = mockk()
         mockedMusicalRemote = mockk(relaxed = true)
-        viewModel = SongsScreenViewModel(mockedSongsRepository, mockedMusicalRemote)
+        viewModel =
+            SongsScreenViewModel(mockedSongsRepository, mockedSongsUseCase, mockedMusicalRemote)
     }
 
     @Test

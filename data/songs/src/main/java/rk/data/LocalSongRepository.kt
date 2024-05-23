@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import rk.core.IS_MUSIC_CLAUSE
 import rk.core.SONGS_URI
+import rk.core.SortOrder
 import rk.core.albumIdColumnIndex
 import rk.core.albumNameColumnIndex
 import rk.core.artistColumnIndex
@@ -14,6 +15,7 @@ import rk.core.songColumns
 import rk.core.songDurationColumnIndex
 import rk.core.songIdColumnIndex
 import rk.core.songNameColumnIndex
+import rk.core.toSortClause
 import rk.data.model.SongMedia
 
 internal class LocalSongRepository(

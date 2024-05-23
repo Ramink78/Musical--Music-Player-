@@ -37,6 +37,7 @@ android {
 
 dependencies {
     implementation(libs.hilt.android)
+    implementation(project(":core"))
     ksp(libs.hilt.compiler)
     implementation(project(":data:songs"))
     implementation(libs.androidx.core.ktx)

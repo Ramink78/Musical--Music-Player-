@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.collections.immutable.toImmutableList
+import rk.core.SortOrder
 import rk.musical.R
 import rk.musical.data.model.Album
 import rk.musical.ui.RationaleWarning
@@ -92,7 +93,9 @@ fun AlbumsScreen(
                         onSongClick = { index ->
                         },
                         modifier = modifier,
-                        contentPadding = contentPadding
+                        contentPadding = contentPadding,
+                        onOrder = {},
+                        initialOrder = SortOrder.DateAddedDesc
                     )
                 }
 

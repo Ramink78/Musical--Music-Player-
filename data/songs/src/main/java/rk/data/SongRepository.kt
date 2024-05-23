@@ -1,5 +1,6 @@
 package rk.data
 
+import rk.core.SortOrder
 import rk.data.model.SongMedia
 
 interface SongRepository {

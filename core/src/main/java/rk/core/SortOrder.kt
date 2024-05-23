@@ -1,7 +1,4 @@
-package rk.data
-
-import rk.core.SONG_DATE_ADDED
-import rk.core.SONG_TITLE
+package rk.core
 
 enum class SortOrder {
     DateAddedAsc,

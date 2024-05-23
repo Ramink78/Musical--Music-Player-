@@ -19,17 +19,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowDownward
+import androidx.compose.material.icons.rounded.ArrowUpward
 import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +52,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import rk.core.SortOrder
 import rk.musical.R
 import rk.musical.data.model.Song
 import rk.musical.ui.RationaleWarning
@@ -96,7 +103,11 @@ fun SongsScreen(
                             songs = state.songs.toImmutableList(),
                             contentPadding = contentPadding,
                             onSongClick = onSongClick,
-                            playingSong = currentSong
+                            playingSong = currentSong,
+                            onOrder = {
+                                viewModel.loadSongs(it)
+                            },
+                            initialOrder = state.order
                         )
                     }
 
@@ -151,7 +162,9 @@ fun SongsList(
     modifier: Modifier = Modifier,
     playingSong: () -> Song = { Song.Empty },
     onSongClick: (Song) -> Unit,
-    contentPadding: PaddingValues = PaddingValues()
+    contentPadding: PaddingValues = PaddingValues(),
+    onOrder: (SortOrder) -> Unit,
+    initialOrder: SortOrder
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -159,6 +172,13 @@ fun SongsList(
         modifier = modifier
 
     ) {
+        item {
+            OrderSelector(
+                modifier = Modifier.fillMaxWidth(),
+                onChanged = onOrder,
+                initialOrder = initialOrder
+            )
+        }
         items(
             items = songs,
             key = {
@@ -259,6 +279,97 @@ fun SongItem(
                     color = cardContentColor
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun OrderSelector(
+    modifier: Modifier = Modifier,
+    initialOrder: SortOrder,
+    onChanged: (SortOrder) -> Unit
+) {
+    val isDateAddedSelected = initialOrder == SortOrder.DateAddedDesc ||
+        initialOrder == SortOrder.DateAddedAsc
+    val isNameSelected = initialOrder == SortOrder.NameAsc ||
+        initialOrder == SortOrder.NameDesc
+    var shouldShowDescIcon by remember {
+        mutableStateOf(
+            initialOrder == SortOrder.DateAddedDesc ||
+                initialOrder == SortOrder.NameDesc
+        )
+    }
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
+    ) {
+        FilterChip(
+            shape = CircleShape,
+            selected = isDateAddedSelected,
+            onClick = {
+                if (initialOrder == SortOrder.DateAddedDesc) {
+                    onChanged(SortOrder.DateAddedAsc)
+                    shouldShowDescIcon = false
+                } else {
+                    onChanged(SortOrder.DateAddedDesc)
+                    shouldShowDescIcon = true
+                }
+            },
+            label = {
+                Text(
+                    text = stringResource(R.string.sort_selector_date_added),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            trailingIcon = {
+                if (isDateAddedSelected) {
+                    if (shouldShowDescIcon) {
+                        Icon(imageVector = Icons.Rounded.ArrowDownward, contentDescription = "")
+                    } else {
+                        Icon(imageVector = Icons.Rounded.ArrowUpward, contentDescription = "")
+                    }
+                }
+            }
+        )
+        FilterChip(
+            shape = CircleShape,
+            selected = isNameSelected,
+            onClick = {
+                if (initialOrder == SortOrder.NameDesc) {
+                    onChanged(SortOrder.NameAsc)
+                    shouldShowDescIcon = false
+                } else {
+                    onChanged(SortOrder.NameDesc)
+                    shouldShowDescIcon = true
+                }
+            },
+            label = {
+                Text(
+                    text = stringResource(R.string.sort_selector_name),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            trailingIcon = {
+                if (isNameSelected) {
+                    if (shouldShowDescIcon) {
+                        Icon(imageVector = Icons.Rounded.ArrowDownward, contentDescription = "")
+                    } else {
+                        Icon(imageVector = Icons.Rounded.ArrowUpward, contentDescription = "")
+                    }
+                }
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun OrderSelectorPreview() {
+    MusicalTheme(darkTheme = true) {
+        OrderSelector(
+            modifier = Modifier.fillMaxWidth(),
+            initialOrder = SortOrder.DateAddedAsc
+        ) {
         }
     }
 }

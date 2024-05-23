@@ -2,13 +2,17 @@ package rk.musical.data
 
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import rk.core.SortOrder
+import rk.domain.AlbumsUseCase
+import rk.domain.SongsUseCase
+import rk.musical.data.model.convertToMediaItems
 import rk.musical.data.model.toMediaItem
 import rk.musical.data.model.toMediaItems
 import rk.playbackservice.MediaItemTree
 
 class MediaItemTreeImpl(
-    private val albumRepository: AlbumRepository,
-    private val songRepository: SongRepository,
+    private val albumsUseCase: AlbumsUseCase,
+    private val songsUseCase: SongsUseCase,
     private val favoriteRepository: FavoriteRepository
 ) : MediaItemTree {
     private val idToChildren = mutableMapOf<String, MutableList<MediaItem>>()
@@ -48,18 +52,19 @@ class MediaItemTreeImpl(
 
     private suspend fun initAlbumCategory() {
         val albumList = mutableListOf<MediaItem>()
-        albumRepository.load()
-        albumList.addAll(albumRepository.cachedAlbums.toMediaItems())
-        albumRepository.cachedAlbums.forEach {
+        val loadedAlbums = albumsUseCase.loadAlbums(SortOrder.DateAddedDesc)
+        albumList.addAll(loadedAlbums.toMediaItems())
+        loadedAlbums.forEach {
             idToMediaItem[it.id] = it.toMediaItem()
         }
-        songRepository.loadSongs().forEach {
+        songsUseCase.loadSongs(SortOrder.DateAddedDesc).forEach {
             idToMediaItem[it.id] = it.toMediaItem()
         }
         idToChildren[albumCategoryId] = albumList
-        val songsByAlbumId = songRepository.loadSongs().groupBy { it.albumId }.mapValues {
-            it.value.toMediaItems().toMutableList()
-        }
+        val songsByAlbumId =
+            songsUseCase.loadSongs(SortOrder.DateAddedDesc).groupBy { it.albumId }.mapValues {
+                it.value.convertToMediaItems().toMutableList()
+            }
         idToChildren.putAll(songsByAlbumId)
     }
 

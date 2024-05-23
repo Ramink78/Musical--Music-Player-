@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlin)
-    alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-
+    alias(libs.plugins.hilt)
 }
 
 android {
-    namespace = "rk.domain.songs"
+    namespace = "rk.domain"
     compileSdk = 34
 
     defaultConfig {
@@ -37,9 +36,9 @@ android {
 
 dependencies {
     implementation(libs.hilt.android)
-    implementation(project(":core"))
     ksp(libs.hilt.compiler)
-    implementation(project(":data:songs"))
+    implementation(project(":data:albums"))
+    implementation(project(":core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

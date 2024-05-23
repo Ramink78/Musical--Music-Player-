@@ -2,15 +2,8 @@ package rk.musical.data.model
 
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
+import rk.domain.model.Album
 import rk.musical.utils.buildAlbumMediaItem
-
-data class Album(
-    val id: String,
-    val title: String,
-    val artist: String,
-    val songsCount: Int,
-    val coverUri: String? = null
-)
 
 fun Album.toMediaItem() =
     buildAlbumMediaItem(

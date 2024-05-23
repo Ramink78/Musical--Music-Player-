@@ -7,48 +7,53 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import rk.musical.data.AlbumRepository
-import rk.musical.data.model.Album
+import rk.core.SortOrder
+import rk.domain.AlbumsUseCase
+import rk.domain.model.Album
 import rk.musical.data.model.Song
-import rk.musical.player.MusicalRemote
 
 @HiltViewModel
 class AlbumsScreenViewModel
 @Inject
 constructor(
-    private val musicalRemote: MusicalRemote,
-    private val albumRepository: AlbumRepository
+    private val albumsUseCase: AlbumsUseCase
 ) : ViewModel() {
     var uiState: AlbumsScreenUiState by mutableStateOf(AlbumsScreenUiState.Empty)
         private set
     var albums: List<Album> by mutableStateOf(emptyList())
     var albumChildren: List<Song> by mutableStateOf(emptyList())
     private var currentAlbums = emptyList<Album>()
-    private var hasCurrentPlaylist = false
 
     init {
         viewModelScope.launch {
             uiState = AlbumsScreenUiState.Loading
-            albumRepository.localAlbums
-                .stateIn(scope = viewModelScope)
-                .collect {
-                    albums = it
-                    uiState =
-                        if (it.isEmpty()) {
-                            AlbumsScreenUiState.Empty
-                        } else {
-                            currentAlbums = it
-                            AlbumsScreenUiState.Loaded
-                        }
+            val loadedAlbums = albumsUseCase.loadAlbums(SortOrder.DateAddedDesc).map {
+                Album(
+                    id = it.id,
+                    title = it.title,
+                    artist = it.artist,
+                    songsCount = it.songsCount,
+                    coverUri = it.coverUri
+                )
+            }
+            albums = loadedAlbums
+            println("Albums: $loadedAlbums")
+            uiState =
+                if (loadedAlbums.isEmpty()) {
+                    AlbumsScreenUiState.Empty
+                } else {
+                    currentAlbums = loadedAlbums
+                    AlbumsScreenUiState.Loaded
                 }
         }
     }
 
     fun refreshAlbums() {
         viewModelScope.launch {
-            albumRepository.loadAlbums()
+            uiState = AlbumsScreenUiState.Loading
+            albumsUseCase.loadAlbums(SortOrder.DateAddedDesc)
+            uiState = AlbumsScreenUiState.Loaded
         }
     }
 }

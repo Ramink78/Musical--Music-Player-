@@ -5,6 +5,7 @@ import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import rk.domain.model.Track
 import rk.musical.utils.ALBUM_ID
 import rk.musical.utils.SONGS_URI
 import rk.musical.utils.SONG_DURATION
@@ -46,6 +47,17 @@ fun Song.toMediaItem() =
         duration = duration,
         albumId = albumId
     )
+fun Track.toMediaItem() =
+    buildSongMediaItem(
+        songId = id,
+        title = title,
+        artist = artist,
+        songUri = songUri.toUri(),
+        albumName = albumName,
+        coverUri = coverUri?.toUri(),
+        duration = duration,
+        albumId = albumId
+    )
 
 fun MediaItem.toSong() =
     Song(
@@ -62,3 +74,4 @@ fun MediaItem.toSong() =
 fun List<MediaItem>.toSongs() = map { it.toSong() }
 
 fun List<Song>.toMediaItems() = map { it.toMediaItem() }
+fun List<Track>.convertToMediaItems() = map { it.toMediaItem() }

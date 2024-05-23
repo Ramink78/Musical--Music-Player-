@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import rk.core.SortOrder
 import rk.domain.SongsUseCase
-import rk.musical.data.SongRepository
 import rk.musical.data.model.Song
 import rk.musical.player.MusicalRemote
 
@@ -19,7 +19,6 @@ import rk.musical.player.MusicalRemote
 class SongsScreenViewModel
 @Inject
 constructor(
-    private val songRepository: SongRepository,
     private val songsUseCase: SongsUseCase,
     private val musicalRemote: MusicalRemote
 ) : ViewModel() {
@@ -36,12 +35,6 @@ constructor(
                 initialValue = Song.Empty
             )
 
-    fun refreshSongs() {
-        viewModelScope.launch {
-            songRepository.loadSongs()
-        }
-    }
-
     fun playSong(index: Int) {
         if (musicalRemote.currentPlaylist != currentSongs) {
             musicalRemote.setPlaylist(currentSongs)
@@ -49,9 +42,9 @@ constructor(
         }
         musicalRemote.playSong(index)
     }
-    fun loadSongs() {
+    fun loadSongs(order: SortOrder = SortOrder.DateAddedDesc) {
         viewModelScope.launch {
-            val loadedSongs = songsUseCase.getSongs().map {
+            val loadedSongs = songsUseCase.loadSongs(order = order).map {
                 Song(
                     id = it.id,
                     albumId = it.albumId,
@@ -67,14 +60,14 @@ constructor(
                 _uiState.update { SongsScreenUiState.Empty }
             } else {
                 currentSongs = loadedSongs
-                _uiState.update { SongsScreenUiState.Loaded(loadedSongs) }
+                _uiState.update { SongsScreenUiState.Loaded(loadedSongs, order) }
             }
         }
     }
 }
 
 sealed interface SongsScreenUiState {
-    data class Loaded(val songs: List<Song>) : SongsScreenUiState
+    data class Loaded(val songs: List<Song>, val order: SortOrder) : SongsScreenUiState
     data object Loading : SongsScreenUiState
     data object Empty : SongsScreenUiState
 }

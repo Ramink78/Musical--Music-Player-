@@ -7,7 +7,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import java.util.concurrent.TimeUnit
 import okio.IOException
-import rk.musical.data.model.Album
+import rk.domain.model.Album
 import rk.musical.data.model.Song
 
 fun Song.loadCover(context: Context): ImageRequest? {

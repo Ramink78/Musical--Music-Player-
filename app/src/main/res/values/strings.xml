@@ -9,4 +9,6 @@
     <string name="media_permission_title">Media Permission</string>
     <string name="empty_lyric">Write the lyric</string>
     <string name="write_the_lyric">Write the lyric</string>
+    <string name="sort_selector_date_added">Date Added</string>
+    <string name="sort_selector_name">Name</string>
 </resources>

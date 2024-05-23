@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import rk.domain.SongsUseCase
-import rk.musical.data.SongRepository
 import rk.musical.data.model.Song
 import rk.musical.player.MusicalRemote
 

@@ -7,7 +7,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import rk.musical.data.AlbumRepository
-import rk.musical.data.SongRepository
 import rk.musical.data.model.Song
 import rk.musical.player.MusicalRemote
 
@@ -16,7 +15,6 @@ class AlbumDetailScreenViewModel
 @Inject
 constructor(
     private val albumRepository: AlbumRepository,
-    private val songRepository: SongRepository,
     private val musicalRemote: MusicalRemote
 ) : ViewModel() {
     private var currentSongs = emptyList<Song>()
@@ -31,8 +29,7 @@ constructor(
     fun findAlbumById(id: String) = albumRepository.cachedAlbums.find { it.id == id }
 
     fun getAlbumChildren(albumId: String): List<Song> {
-        currentSongs = songRepository.getAlbumSongs(albumId)
-        return currentSongs
+        return emptyList()
     }
 
     fun playSong(index: Int) {

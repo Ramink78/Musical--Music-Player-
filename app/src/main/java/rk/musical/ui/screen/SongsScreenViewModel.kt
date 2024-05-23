@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import rk.core.SortOrder
 import rk.domain.SongsUseCase
-import rk.musical.data.SongRepository
 import rk.musical.data.model.Song
 import rk.musical.player.MusicalRemote
 
@@ -20,7 +19,6 @@ import rk.musical.player.MusicalRemote
 class SongsScreenViewModel
 @Inject
 constructor(
-    private val songRepository: SongRepository,
     private val songsUseCase: SongsUseCase,
     private val musicalRemote: MusicalRemote
 ) : ViewModel() {
@@ -36,12 +34,6 @@ constructor(
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = Song.Empty
             )
-
-    fun refreshSongs() {
-        viewModelScope.launch {
-            songRepository.loadSongs()
-        }
-    }
 
     fun playSong(index: Int) {
         if (musicalRemote.currentPlaylist != currentSongs) {

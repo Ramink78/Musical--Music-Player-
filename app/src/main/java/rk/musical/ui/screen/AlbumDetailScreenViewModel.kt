@@ -4,9 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
-import rk.musical.data.AlbumRepository
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import rk.domain.SongsUseCase
+import rk.domain.model.Album
 import rk.musical.data.model.Song
 import rk.musical.player.MusicalRemote
 
@@ -14,9 +19,11 @@ import rk.musical.player.MusicalRemote
 class AlbumDetailScreenViewModel
 @Inject
 constructor(
-    private val albumRepository: AlbumRepository,
+    private val songsUseCase: SongsUseCase,
     private val musicalRemote: MusicalRemote
 ) : ViewModel() {
+    private val _uiState = MutableStateFlow<AlbumDetailUiState>(AlbumDetailUiState.Loading)
+    val uiState = _uiState.asStateFlow()
     private var currentSongs = emptyList<Song>()
     val playingSong =
         musicalRemote.playingSongFlow
@@ -26,10 +33,35 @@ constructor(
                 initialValue = Song.Empty
             )
 
-    fun findAlbumById(id: String) = albumRepository.cachedAlbums.find { it.id == id }
-
-    fun getAlbumChildren(albumId: String): List<Song> {
-        return emptyList()
+    fun getAlbumChildren(albumId: String) {
+        _uiState.update { AlbumDetailUiState.Loading }
+        viewModelScope.launch {
+            val children = songsUseCase.getAlbumSongs(albumId)
+            _uiState.update {
+                val child = children.first()
+                AlbumDetailUiState.Loaded(
+                    album = Album(
+                        id = child.albumId,
+                        title = child.albumName,
+                        artist = child.artist,
+                        coverUri = child.coverUri,
+                        songsCount = children.size
+                    ),
+                    children = children.map {
+                        Song(
+                            id = it.id,
+                            title = it.title,
+                            coverUri = it.coverUri,
+                            artist = it.artist,
+                            albumId = it.albumId,
+                            albumName = it.albumName,
+                            duration = it.duration,
+                            songUri = it.songUri
+                        )
+                    }.also { currentSongs = it }
+                )
+            }
+        }
     }
 
     fun playSong(index: Int) {
@@ -39,4 +71,12 @@ constructor(
         }
         musicalRemote.playSong(index)
     }
+}
+
+sealed interface AlbumDetailUiState {
+    data object Loading : AlbumDetailUiState
+    data class Loaded(
+        val album: Album,
+        val children: List<Song>
+    ) : AlbumDetailUiState
 }

@@ -1,10 +1,12 @@
 package rk.musical.ui.screen
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,8 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,43 +42,56 @@ import rk.musical.ui.theme.MusicalTheme
 @Composable
 fun AlbumDetailScreen(albumId: String) {
     val viewModel: AlbumDetailScreenViewModel = hiltViewModel()
-    val album =
-        remember {
-            viewModel.findAlbumById(albumId)!!
-        }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val playingSong by viewModel.playingSong.collectAsStateWithLifecycle()
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding =
-        PaddingValues(
-            bottom = 180.dp
-        )
-    ) {
-        item {
-            AlbumHeader(
-                Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp)),
-                coverUri = album.coverUri
-            )
-        }
-        item {
-            AlbumInfo(
-                title = album.title,
-                subtitle = album.artist,
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-        itemsIndexed(viewModel.getAlbumChildren(albumId)) { index, item ->
-            AlbumChildItem(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                song = item,
-                onItemClick = { viewModel.playSong(index) },
-                ordinal = index + 1,
-                isChecked = playingSong == item
-            )
+    LaunchedEffect(Unit) {
+        viewModel.getAlbumChildren(albumId)
+    }
+    AnimatedContent(targetState = uiState, label = "") { state ->
+        when (state) {
+            is AlbumDetailUiState.Loaded -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding =
+                    PaddingValues(
+                        bottom = 180.dp
+                    )
+                ) {
+                    item {
+                        AlbumHeader(
+                            Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                .clip(RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp)),
+                            coverUri = state.album.coverUri
+                        )
+                    }
+                    item {
+                        AlbumInfo(
+                            title = state.album.title,
+                            subtitle = state.album.artist,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+
+                    itemsIndexed(state.children) { index, item ->
+                        AlbumChildItem(
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            song = item,
+                            onItemClick = { viewModel.playSong(index) },
+                            ordinal = index + 1,
+                            isChecked = playingSong == item
+                        )
+                    }
+                }
+            }
+
+            AlbumDetailUiState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    LoadingCircle()
+                }
+            }
         }
     }
 }

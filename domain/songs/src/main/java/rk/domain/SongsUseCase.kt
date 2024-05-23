@@ -12,4 +12,8 @@ class SongsUseCase @Inject constructor(
     suspend fun loadSongs(order: SortOrder): List<Track> {
         return songRepository.loadSongs(order = order).map { it.toTrack() }
     }
+
+    suspend fun getAlbumSongs(albumId: String): List<Track> {
+        return songRepository.getAlbumSongs(albumId).map { it.toTrack() }
+    }
 }

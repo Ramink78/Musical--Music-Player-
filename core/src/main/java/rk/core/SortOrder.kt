@@ -7,6 +7,7 @@ enum class SortOrder {
     NameDesc
 }
 
+
 fun SortOrder.toSortClause() =
     when (this) {
         SortOrder.DateAddedAsc -> "$SONG_DATE_ADDED ASC"

@@ -6,7 +6,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import rk.core.IS_MUSIC_CLAUSE
 import rk.core.SONGS_URI
-import rk.core.SONG_DATE_ADDED
 import rk.core.albumIdColumnIndex
 import rk.core.albumNameColumnIndex
 import rk.core.artistColumnIndex
@@ -21,12 +20,12 @@ internal class LocalSongRepository(
     private val context: Context,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : SongRepository {
-    override suspend fun loadSongs(): List<SongMedia> {
+    override suspend fun loadSongs(order: SortOrder): List<SongMedia> {
         val tempList = mutableListOf<SongMedia>()
         context.contentResolver.coUery(
             uri = SONGS_URI,
             columns = songColumns,
-            sortOrder = "$SONG_DATE_ADDED DESC",
+            sortOrder = order.toSortClause(),
             selection = IS_MUSIC_CLAUSE,
             coroutineDispatcher = dispatcher,
             onResult = {

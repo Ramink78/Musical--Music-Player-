@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import rk.domain.SongsUseCase
 import rk.musical.data.SongRepository
 import rk.musical.data.model.Song
 import rk.musical.player.MusicalRemote
@@ -19,6 +20,7 @@ class SongsScreenViewModel
 @Inject
 constructor(
     private val songRepository: SongRepository,
+    private val songsUseCase: SongsUseCase,
     private val musicalRemote: MusicalRemote
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<SongsScreenUiState>(SongsScreenUiState.Loading)
@@ -49,7 +51,18 @@ constructor(
     }
     fun loadSongs() {
         viewModelScope.launch {
-            val loadedSongs = songRepository.loadSongs()
+            val loadedSongs = songsUseCase.getSongs().map {
+                Song(
+                    id = it.id,
+                    albumId = it.albumId,
+                    albumName = it.albumName,
+                    songUri = it.songUri,
+                    artist = it.artist,
+                    duration = it.duration,
+                    title = it.title,
+                    coverUri = it.coverUri
+                )
+            }
             if (loadedSongs.isEmpty()) {
                 _uiState.update { SongsScreenUiState.Empty }
             } else {

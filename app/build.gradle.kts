@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
     implementation(project(":PlaybackService"))
+    implementation(project(":domain:songs"))
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.hilt.android)

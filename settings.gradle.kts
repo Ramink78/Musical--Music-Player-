@@ -15,3 +15,7 @@ dependencyResolutionManagement {
 rootProject.name = "Musical"
 include(":app")
 include(":PlaybackService")
+include(":data:songs")
+include(":ui:songs")
+include(":core")
+include(":domain:songs")

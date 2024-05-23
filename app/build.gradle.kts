@@ -94,6 +94,7 @@ dependencies {
     implementation(project(":domain:songs"))
     implementation(project(":domain:albums"))
     implementation(project(":core"))
+    implementation(project(":ui:nowPlaying"))
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.hilt.android)

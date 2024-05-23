@@ -32,11 +32,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
@@ -106,6 +104,7 @@ import rk.musical.ui.theme.MusicalTheme
 import rk.musical.utils.NowPlayingDynamicTheme
 import rk.musical.utils.readableDuration
 import rk.musical.utils.verticalGradientScrim
+import rk.ui.nowplaying.MiniNowPlaying
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -196,45 +195,15 @@ private fun PlayerScreen(
 private fun CollapsedPlayer(modifier: Modifier = Modifier) {
     val viewModel: CollapsedNowPlayingViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    Row(
-        modifier =
-        modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-            .height(64.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        CoverImage(
-            coverUri = uiState.playingSong.coverUri,
-            modifier =
-            Modifier
-                .size(48.dp)
-                .clip(CircleShape),
-            size = Size(width = 128, 128),
-            placeholder = { SongPlaceholder() }
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            modifier = Modifier.weight(1f),
-            text = uiState.playingSong.title,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        IconButton(onClick = viewModel::togglePlay) {
-            Icon(
-                imageVector =
-                if (uiState.isPlaying) {
-                    Icons.Rounded.Pause
-                } else {
-                    Icons.Rounded.PlayArrow
-                },
-                contentDescription = "",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
+    MiniNowPlaying(
+        coverUri = uiState.playingSong.coverUri,
+        title = uiState.playingSong.title,
+        onTogglePlay = viewModel::togglePlay,
+        isPlaying = uiState.isPlaying,
+        coverPlaceholder = { SongPlaceholder() },
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        modifier = modifier
+    )
 }
 
 @Composable

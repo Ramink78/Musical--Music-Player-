@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import rk.core.PlaybackSpeed
+import rk.core.RepeatMode
 import rk.musical.data.FavoriteRepository
 import rk.musical.data.LyricRepository
 import rk.musical.data.model.Lyric
@@ -43,7 +45,7 @@ constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
-                initialValue = 0
+                initialValue = RepeatMode.Off
             )
     val shuffleModeFlow =
         musicalRemote.shuffleModeFlow
@@ -118,9 +120,9 @@ constructor(
 
     fun changeRepeatMode() {
         when (repeatModeFlow.value) {
-            Player.REPEAT_MODE_OFF -> musicalRemote.setRepeatMode(Player.REPEAT_MODE_ALL)
-            Player.REPEAT_MODE_ALL -> musicalRemote.setRepeatMode(Player.REPEAT_MODE_ONE)
-            else -> musicalRemote.setRepeatMode(Player.REPEAT_MODE_OFF)
+            RepeatMode.Off -> musicalRemote.setRepeatMode(Player.REPEAT_MODE_ALL)
+            RepeatMode.All -> musicalRemote.setRepeatMode(Player.REPEAT_MODE_ONE)
+            RepeatMode.One -> musicalRemote.setRepeatMode(Player.REPEAT_MODE_OFF)
         }
     }
 
@@ -130,13 +132,15 @@ constructor(
         }
     }
 
-    fun setPlaybackSpeed(index: Int) {
-        when (index) {
-            0 -> musicalRemote.setPlaybackSpeed(.5f)
-            1 -> musicalRemote.setPlaybackSpeed(1f)
-            2 -> musicalRemote.setPlaybackSpeed(1.5f)
-            else -> musicalRemote.setPlaybackSpeed(2f)
-        }
+    fun setPlaybackSpeed(playbackSpeed: PlaybackSpeed) {
+        musicalRemote.setPlaybackSpeed(
+            when (playbackSpeed) {
+                PlaybackSpeed.Slow -> .5f
+                PlaybackSpeed.Normal -> 1f
+                PlaybackSpeed.Fast -> 1.5f
+                PlaybackSpeed.VeryFast -> 2f
+            }
+        )
     }
 }
 

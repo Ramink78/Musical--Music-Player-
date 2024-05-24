@@ -9,6 +9,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import rk.core.RepeatMode
 import rk.musical.data.model.Song
 import rk.musical.data.model.toSong
 
@@ -53,11 +54,11 @@ fun Player.currentPositionFlow() =
 
 fun Player.repeatModeFlow() =
     callbackFlow {
-        send(repeatMode)
+        send(mapIntRoRepeatMode(repeatMode))
         val listener =
             object : Player.Listener {
-                override fun onRepeatModeChanged(repeatMode: Int) {
-                    trySendBlocking(repeatMode)
+                override fun onRepeatModeChanged(@Player.RepeatMode repeatMode: Int) {
+                    trySendBlocking(mapIntRoRepeatMode(repeatMode))
                 }
             }
         addListener(listener)
@@ -76,3 +77,19 @@ fun Player.shuffleModeFlow() =
         addListener(listener)
         awaitClose { removeListener(listener) }
     }.flowOn(Dispatchers.Main)
+
+fun mapIntRoRepeatMode(@Player.RepeatMode repeatMode: Int): RepeatMode {
+    return when (repeatMode) {
+        Player.REPEAT_MODE_ALL -> {
+            RepeatMode.All
+        }
+
+        Player.REPEAT_MODE_OFF -> {
+            RepeatMode.Off
+        }
+
+        else -> {
+            RepeatMode.One
+        }
+    }
+}

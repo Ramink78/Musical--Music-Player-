@@ -1,4 +1,4 @@
-package rk.ui.nowplaying
+package rk.ui.nowplaying.collapsed
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -89,7 +89,7 @@ fun MiniNowPlaying(
 }
 
 @Composable
-fun CoverImage(
+internal fun CoverImage(
     coverUri: String?,
     modifier: Modifier = Modifier,
     size: Size = Size(
@@ -116,7 +116,7 @@ fun CoverImage(
 
 @Preview
 @Composable
-private fun MiniNowPlayingPrevieww() {
+internal fun MiniNowPlayingPreview() {
     MiniNowPlaying(
         coverUri = "",
         title = "Title",

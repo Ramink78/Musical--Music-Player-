@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "rk.core"
+    namespace = "rk.ui.songs"
     compileSdk = 34
 
     defaultConfig {
@@ -15,12 +15,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
-    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -29,6 +24,12 @@ android {
                 "proguard-rules.pro"
             )
         }
+    }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -40,23 +41,37 @@ android {
 }
 
 dependencies {
-    //Hilt
+    // Hilt
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
 
-    //Media3
-    api(libs.androidx.media3.exoplayer)
-
-    implementation(libs.coil.compose)
+    // Compose
     implementation(platform(libs.compoose.bom))
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.coil.compose)
+    implementation(libs.material)
+
+    //lifecycle
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+
+    //kotlinx
+    implementation(libs.kotlinx.collections.immutable)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+
+    //modules
+    implementation(project(":domain:songs"))
+    implementation(project(":core"))
+
+    //test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

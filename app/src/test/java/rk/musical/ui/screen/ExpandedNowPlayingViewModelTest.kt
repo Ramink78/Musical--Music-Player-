@@ -7,10 +7,10 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
+import rk.core.player.MusicalRemote
 import rk.musical.data.FavoriteRepository
 import rk.musical.data.LyricRepository
 import rk.musical.data.model.Song
-import rk.musical.player.MusicalRemote
 
 class ExpandedNowPlayingViewModelTest {
     lateinit var viewModel: ExpandedNowPlayingViewModel

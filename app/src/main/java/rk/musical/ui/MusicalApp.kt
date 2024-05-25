@@ -43,7 +43,7 @@ import rk.musical.navigation.MusicalRoutes
 import rk.musical.ui.screen.AlbumDetailScreen
 import rk.musical.ui.screen.AlbumsScreen
 import rk.musical.ui.screen.PlayerScreen
-import rk.musical.ui.screen.SongsScreen
+import rk.ui.songs.SongsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,18 +97,19 @@ fun MusicalApp() {
                     startDestination = MusicalRoutes.Songs.name
                 ) {
                     composable(route = MusicalRoutes.Songs.name) {
-                        SongsScreen(
-                            contentPadding =
-                            PaddingValues(
-                                top =
-                                WindowInsets.statusBars.asPaddingValues()
-                                    .calculateTopPadding(),
-                                bottom = sheetPadding.calculateBottomPadding(),
-                                end = 8.dp,
-                                start = 8.dp
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
+                        SongsScreen(modifier = Modifier.fillMaxSize())
+//                        SongsScreen(
+//                            contentPadding =
+//                            PaddingValues(
+//                                top =
+//                                WindowInsets.statusBars.asPaddingValues()
+//                                    .calculateTopPadding(),
+//                                bottom = sheetPadding.calculateBottomPadding(),
+//                                end = 8.dp,
+//                                start = 8.dp
+//                            ),
+//                            modifier = Modifier.fillMaxSize()
+//                        )
                     }
                     composable(route = MusicalRoutes.Albums.name) {
                         AlbumsScreen(

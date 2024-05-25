@@ -4,8 +4,8 @@ import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
+import rk.core.player.MusicalRemote
 import rk.musical.data.model.Song
-import rk.musical.player.MusicalRemote
 
 class CollapsedNowPlayingViewModelTest {
 

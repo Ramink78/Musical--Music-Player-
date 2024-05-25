@@ -7,9 +7,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import rk.core.player.MusicalRemote
 import rk.domain.SongsUseCase
 import rk.musical.data.model.Song
-import rk.musical.player.MusicalRemote
+import rk.ui.songs.SongsScreenUiState
+import rk.ui.songs.SongsScreenViewModel
 
 class SongsScreenViewModelTest {
     lateinit var viewModel: SongsScreenViewModel

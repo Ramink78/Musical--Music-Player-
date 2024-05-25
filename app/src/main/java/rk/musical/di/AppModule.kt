@@ -1,9 +1,6 @@
 package rk.musical.di
 
 import android.content.Context
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.room.Room
 import dagger.Module
 import dagger.Provides
@@ -38,27 +35,27 @@ object AppModule {
     fun provideLyricDao(db: MusicalDatabase) =
         db.lyricDao()
 
-    @Singleton
-    @Provides
-    fun provideAudioAttributes(): AudioAttributes {
-        return AudioAttributes.Builder()
-            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-            .setSpatializationBehavior(C.SPATIALIZATION_BEHAVIOR_AUTO)
-            .setUsage(C.USAGE_MEDIA)
-            .build()
-    }
+//    @Singleton
+//    @Provides
+//    fun provideAudioAttributes(): AudioAttributes {
+//        return AudioAttributes.Builder()
+//            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+//            .setSpatializationBehavior(C.SPATIALIZATION_BEHAVIOR_AUTO)
+//            .setUsage(C.USAGE_MEDIA)
+//            .build()
+//    }
 
-    @Singleton
-    @Provides
-    fun provideExoPlayer(
-        @ApplicationContext context: Context,
-        audioAttributes: AudioAttributes
-    ): ExoPlayer {
-        return ExoPlayer.Builder(context)
-            .setHandleAudioBecomingNoisy(true)
-            .setAudioAttributes(audioAttributes, true)
-            .build()
-    }
+//    @Singleton
+//    @Provides
+//    fun provideExoPlayer(
+//        @ApplicationContext context: Context,
+//        audioAttributes: AudioAttributes
+//    ): ExoPlayer {
+//        return ExoPlayer.Builder(context)
+//            .setHandleAudioBecomingNoisy(true)
+//            .setAudioAttributes(audioAttributes, true)
+//            .build()
+//    }
 
     @Singleton
     @Provides

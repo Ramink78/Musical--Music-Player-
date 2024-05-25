@@ -35,8 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import kotlinx.collections.immutable.toImmutableList
-import rk.core.SortOrder
 import rk.domain.model.Album
 import rk.musical.R
 import rk.musical.ui.RationaleWarning
@@ -88,15 +86,15 @@ fun AlbumsScreen(
                 }
 
                 is AlbumsScreenUiState.LoadedChildren -> {
-                    SongsList(
-                        songs = albumChildren.toImmutableList(),
-                        onSongClick = { index ->
-                        },
-                        modifier = modifier,
-                        contentPadding = contentPadding,
-                        onOrder = {},
-                        initialOrder = SortOrder.DateAddedDesc
-                    )
+//                    SongsList(
+//                        songs = albumChildren.toImmutableList(),
+//                        onSongClick = { index ->
+//                        },
+//                        modifier = modifier,
+//                        contentPadding = contentPadding,
+//                        onOrder = {},
+//                        initialOrder = SortOrder.DateAddedDesc
+//                    )
                 }
 
                 else -> {}

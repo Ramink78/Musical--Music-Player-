@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import rk.core.player.MusicalRemote
 import rk.domain.SongsUseCase
 import rk.domain.model.Album
 import rk.musical.data.model.Song
-import rk.musical.player.MusicalRemote
 
 @HiltViewModel
 class AlbumDetailScreenViewModel
@@ -26,7 +26,7 @@ constructor(
     val uiState = _uiState.asStateFlow()
     private var currentSongs = emptyList<Song>()
     val playingSong =
-        musicalRemote.playingSongFlow
+        musicalRemote.playingMediaItemFlow
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -66,7 +66,7 @@ constructor(
 
     fun playSong(index: Int) {
         if (musicalRemote.currentPlaylist != currentSongs) {
-            musicalRemote.setPlaylist(currentSongs)
+            // musicalRemote.setPlaylist(currentSongs)
             // hasCurrentPlaylist = true
         }
         musicalRemote.playSong(index)

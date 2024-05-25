@@ -14,11 +14,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import rk.core.PlaybackSpeed
 import rk.core.RepeatMode
+import rk.core.player.MusicalRemote
 import rk.musical.data.FavoriteRepository
 import rk.musical.data.LyricRepository
 import rk.musical.data.model.Lyric
 import rk.musical.data.model.Song
-import rk.musical.player.MusicalRemote
 import rk.musical.utils.readableDuration
 
 @HiltViewModel
@@ -58,11 +58,11 @@ constructor(
         musicalRemote.playbackStateFlow
             .map {
                 ExpandedNowPlayingUiState(
-                    currentSong = it.currentSong,
+                    //  currentSong = it.currentSong,
                     currentTime = readableDuration(it.currentPosition),
-                    totalTime = readableDuration(it.currentSong.duration),
+                    //    totalTime = readableDuration(it.currentSong.duration),
                     isPlaying = it.isPlaying,
-                    isFavorite = favoriteRepository.isLiked(it.currentSong),
+                    //  isFavorite = favoriteRepository.isLiked(it.currentSong),
                     playbackPosition = it.currentPosition
                 )
             }

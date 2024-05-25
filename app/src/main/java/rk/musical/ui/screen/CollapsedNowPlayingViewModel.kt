@@ -7,8 +7,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import rk.core.player.MusicalRemote
 import rk.musical.data.model.Song
-import rk.musical.player.MusicalRemote
 
 @HiltViewModel
 class CollapsedNowPlayingViewModel
@@ -20,11 +20,11 @@ constructor(
     val uiState =
         combine(
             musicalRemote.isPlayingFlow,
-            musicalRemote.playingSongFlow
+            musicalRemote.playingMediaItemFlow
         ) { isPlaying, playingSong ->
             CollapsedNowPlayingUiState(
-                isPlaying = isPlaying,
-                playingSong = playingSong
+                isPlaying = isPlaying
+                // playingSong = playingSong
             )
         }.stateIn(
             scope = viewModelScope,

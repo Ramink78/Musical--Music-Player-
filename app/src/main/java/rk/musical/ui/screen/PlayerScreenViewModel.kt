@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import rk.musical.data.model.Song
-import rk.musical.player.MusicalRemote
+import rk.core.player.MusicalRemote
 
 @HiltViewModel
 class PlayerScreenViewModel
@@ -17,10 +16,11 @@ class PlayerScreenViewModel
 constructor
 (private val musicalRemote: MusicalRemote) : ViewModel() {
     val isVisibleSheetFlow =
-        musicalRemote.playingSongFlow
+        musicalRemote.playingMediaItemFlow
             .distinctUntilChanged()
             .map {
-                it != Song.Empty
+                it != null
+                //   it != Song.Empty
             }
             .stateIn(
                 scope = viewModelScope,

@@ -41,12 +41,12 @@ fun Player.playingMediaItemFlow() =
         awaitClose { removeListener(listener) }
     }.flowOn(Dispatchers.Main)
 
-// this flow emit only in NowPlaying expanded state
+// this flow emit only in FullNowPlayingScreen expanded state
 fun Player.currentPositionFlow() =
     flow {
         while (true) {
             emit(currentPosition)
-            delay(700)
+            delay(600)
         }
     }.flowOn(Dispatchers.Main)
 

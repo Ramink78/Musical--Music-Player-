@@ -7,7 +7,6 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player.RepeatMode
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 @ActivityRetainedScoped
@@ -21,18 +20,6 @@ constructor(private val exoPlayer: ExoPlayer) {
     val shuffleModeFlow = exoPlayer.shuffleModeFlow()
     var currentPlaylist = emptyList<MediaItem>()
         private set
-    val playbackStateFlow =
-        combine(
-            playingMediaItemFlow,
-            isPlayingFlow,
-            currentPositionFlow
-        ) { playingMediaItem, isPlaying, currentPosition ->
-            MusicalRemoteState(
-                isPlaying = isPlaying,
-                currentMediaItem = playingMediaItem,
-                currentPosition = currentPosition
-            )
-        }
 
     fun playSong(index: Int) {
         exoPlayer.seekToDefaultPosition(index)
@@ -97,7 +84,7 @@ constructor(private val exoPlayer: ExoPlayer) {
 
     fun seekPrevious() = exoPlayer.seekToPrevious()
 
-    fun seekToPosition(pos: Long) = exoPlayer.seekTo(pos)
+    fun seekToPosition(progress: Float) = exoPlayer.seekTo((progress * exoPlayer.duration).toLong())
 
     fun setRepeatMode(
         @RepeatMode repeatMode: Int
@@ -112,8 +99,3 @@ constructor(private val exoPlayer: ExoPlayer) {
     fun setPlaybackSpeed(speed: Float) = exoPlayer.setPlaybackSpeed(speed)
 }
 
-data class MusicalRemoteState(
-    val isPlaying: Boolean = false,
-    val currentMediaItem: MediaItem? = null,
-    val currentPosition: Long = 0L
-)

@@ -24,10 +24,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,9 +40,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import rk.core.Padding
 import rk.core.PlayerState
 import rk.core.RepeatMode
-import rk.core.Padding
 
 @Composable
 internal fun PlayerController(
@@ -49,8 +53,14 @@ internal fun PlayerController(
     onTogglePlay: () -> Unit,
     onShuffleClick: () -> Unit,
     onRepeatModeClick: () -> Unit,
-    onPositionChanged: (Long) -> Unit
+    onPositionChanged: (Float) -> Unit,
 ) {
+    var sliderState by remember {
+        mutableFloatStateOf(playerState.progress)
+    }
+    LaunchedEffect(key1 = playerState.progress) {
+        sliderState = playerState.progress
+    }
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -83,8 +93,18 @@ internal fun PlayerController(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = Padding.m),
-            value = 0f,
-            onValueChange = {}
+            value = sliderState,
+            onValueChange = {
+                sliderState = it
+            },
+            onValueChangeFinished = {
+                onPositionChanged(sliderState)
+            },
+            colors = SliderDefaults.colors(
+                activeTrackColor = MaterialTheme.colorScheme.onSurface,
+                thumbColor = MaterialTheme.colorScheme.onSurface,
+                inactiveTrackColor = MaterialTheme.colorScheme.surface
+            )
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -100,7 +120,7 @@ internal fun PlayerController(
                     Icons.Rounded.PlayArrow
                 }
             RepeatModeButton(
-                enableColor = MaterialTheme.colorScheme.background,
+                enableColor = MaterialTheme.colorScheme.surface,
                 disableColor = Color.Transparent,
                 icon = when (playerState.repeatMode) {
                     RepeatMode.All -> Icons.Rounded.Repeat
@@ -120,11 +140,12 @@ internal fun PlayerController(
             }
             FloatingActionButton(
                 onClick = onTogglePlay,
-                containerColor = MaterialTheme.colorScheme.background
+                containerColor = MaterialTheme.colorScheme.onSurface
             ) {
                 Icon(
                     imageVector = playImageVector,
-                    contentDescription = ""
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.surface
                 )
             }
             IconButton(
@@ -137,7 +158,7 @@ internal fun PlayerController(
             }
             ShuffleModeButton(
                 icon = Icons.Rounded.Shuffle,
-                enableColor = MaterialTheme.colorScheme.background,
+                enableColor = MaterialTheme.colorScheme.surface,
                 disableColor = Color.Transparent,
                 onShuffleClick = onShuffleClick,
                 isEnable = playerState.shuffleMode

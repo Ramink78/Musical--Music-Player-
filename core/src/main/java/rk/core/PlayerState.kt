@@ -10,7 +10,8 @@ data class PlayerState(
     val shuffleMode: Boolean,
     val repeatMode: RepeatMode,
     val isFavorite: Boolean,
-    val playbackSpeed: PlaybackSpeed
+    val playbackSpeed: PlaybackSpeed,
+    val progress: Float
 ) {
     companion object {
         val idle = PlayerState(
@@ -23,7 +24,8 @@ data class PlayerState(
             repeatMode = RepeatMode.Off,
             isFavorite = false,
             coverUri = null,
-            playbackSpeed = PlaybackSpeed.Normal
+            playbackSpeed = PlaybackSpeed.Normal,
+            progress = 0f,
         )
     }
 }

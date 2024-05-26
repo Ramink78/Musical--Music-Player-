@@ -1,11 +1,17 @@
-package rk.musical.utils
+package rk.ui.nowplaying.expanded
 
 import androidx.annotation.FloatRange
+import androidx.compose.foundation.background
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RadialGradientShader
+import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.node.DrawModifierNode
@@ -36,6 +42,24 @@ fun Modifier.verticalGradientScrim(
     numStops: Int = 16
 ) = this then VerticalGradientElement(color, startYPercentage, endYPercentage, decay, numStops)
 
+/**
+ * Applies a radial gradient scrim in the foreground emanating from the top
+ * center quarter of the element.
+ */
+fun Modifier.radialGradientScrim(color: Color): Modifier {
+    val radialGradient = object : ShaderBrush() {
+        override fun createShader(size: Size): Shader {
+            val largerDimension = max(size.height, size.width)
+            return RadialGradientShader(
+                center = size.center.copy(y = size.height / 4),
+                colors = listOf(color, Color.Transparent),
+                radius = largerDimension / 2,
+                colorStops = listOf(0f, 0.9f)
+            )
+        }
+    }
+    return this.background(radialGradient)
+}
 private data class VerticalGradientElement(
     var color: Color,
     var startYPercentage: Float = 0f,
@@ -44,25 +68,24 @@ private data class VerticalGradientElement(
     var numStops: Int = 16
 ) : ModifierNodeElement<VerticalGradientModifier>() {
     fun createOnDraw(): DrawScope.() -> Unit {
-        val colors =
-            if (decay != 1f) {
-                // If we have a non-linear decay, we need to create the color gradient steps
-                // manually
-                val baseAlpha = color.alpha
-                List(numStops) { i ->
-                    val x = i * 1f / (numStops - 1)
-                    val opacity = x.pow(decay)
-                    color.copy(alpha = baseAlpha * opacity)
-                }
-            } else {
-                // If we have a linear decay, we just create a simple list of start + end colors
-                listOf(color.copy(alpha = 0f), color)
+        val colors = if (decay != 1f) {
+            // If we have a non-linear decay, we need to create the color gradient steps
+            // manually
+            val baseAlpha = color.alpha
+            List(numStops) { i ->
+                val x = i * 1f / (numStops - 1)
+                val opacity = x.pow(decay)
+                color.copy(alpha = baseAlpha * opacity)
             }
+        } else {
+            // If we have a linear decay, we just create a simple list of start + end colors
+            listOf(color.copy(alpha = 0f), color)
+        }
 
         val brush =
             // Reverse the gradient if decaying downwards
             Brush.verticalGradient(
-                colors = if (startYPercentage < endYPercentage) colors else colors.reversed()
+                colors = if (startYPercentage < endYPercentage) colors else colors.reversed(),
             )
 
         return {
@@ -97,9 +120,11 @@ private data class VerticalGradientElement(
     }
 }
 
+
 private class VerticalGradientModifier(
     var onDraw: DrawScope.() -> Unit
 ) : Modifier.Node(), DrawModifierNode {
+
     override fun ContentDrawScope.draw() {
         onDraw()
         drawContent()

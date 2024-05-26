@@ -16,18 +16,27 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowDownward
+import androidx.compose.material.icons.rounded.ArrowUpward
 import androidx.compose.material3.Card
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,7 +64,9 @@ fun SongsScreen(modifier: Modifier = Modifier) {
     SongsScreen(
         songsScreenState = uiState,
         onTrackClick = viewModel::playSong,
-        modifier = modifier
+        onOrder = viewModel::loadSongs,
+        modifier = modifier,
+        order = uiState.sortOrder
     )
 
 
@@ -65,7 +76,9 @@ fun SongsScreen(modifier: Modifier = Modifier) {
 internal fun SongsScreen(
     modifier: Modifier = Modifier,
     songsScreenState: SongsScreenUiModel,
-    onTrackClick: (Int) -> Unit
+    onTrackClick: (Int) -> Unit,
+    onOrder: (SortOrder) -> Unit,
+    order: SortOrder
 ) {
     Box(modifier = modifier) {
         when {
@@ -82,7 +95,9 @@ internal fun SongsScreen(
                     tracks =
                     songsScreenState.tracks.toImmutableList(),
                     playingTrackId = songsScreenState.currentTrack?.id,
-                    onTrackClick = onTrackClick
+                    onTrackClick = onTrackClick,
+                    onOrder = onOrder,
+                    initialOrder = order
                 )
             }
         }
@@ -90,13 +105,13 @@ internal fun SongsScreen(
 }
 
 @Composable
-fun SongsList(
+internal fun SongsList(
     tracks: ImmutableList<Track>,
     modifier: Modifier = Modifier,
     playingTrackId: String?,
     onTrackClick: (Int) -> Unit,
-    onOrder: (SortOrder) -> Unit = {},
-    initialOrder: SortOrder = SortOrder.DateAddedDesc
+    onOrder: (SortOrder) -> Unit,
+    initialOrder: SortOrder
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -105,11 +120,11 @@ fun SongsList(
 
     ) {
         item {
-//            OrderSelector(
-//                modifier = Modifier.fillMaxWidth(),
-//                onChanged = onOrder,
-//                initialOrder = initialOrder
-//            )
+            OrderSelector(
+                modifier = Modifier.fillMaxWidth(),
+                onChanged = onOrder,
+                initialOrder = initialOrder
+            )
         }
         itemsIndexed(
             items = tracks,
@@ -216,6 +231,95 @@ fun TrackItem(
     }
 }
 
+@Composable
+fun OrderSelector(
+    modifier: Modifier = Modifier,
+    initialOrder: SortOrder,
+    onChanged: (SortOrder) -> Unit
+) {
+    val isDateAddedSelected = initialOrder == SortOrder.DateAddedDesc ||
+            initialOrder == SortOrder.DateAddedAsc
+    val isNameSelected = initialOrder == SortOrder.NameAsc ||
+            initialOrder == SortOrder.NameDesc
+    var shouldShowDescIcon by remember {
+        mutableStateOf(
+            initialOrder == SortOrder.DateAddedDesc ||
+                    initialOrder == SortOrder.NameDesc
+        )
+    }
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
+    ) {
+        FilterChip(
+            shape = CircleShape,
+            selected = isDateAddedSelected,
+            onClick = {
+                if (initialOrder == SortOrder.DateAddedDesc) {
+                    onChanged(SortOrder.DateAddedAsc)
+                    shouldShowDescIcon = false
+                } else {
+                    onChanged(SortOrder.DateAddedDesc)
+                    shouldShowDescIcon = true
+                }
+            },
+            label = {
+                Text(
+                    text = stringResource(R.string.sort_selector_date_added),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            trailingIcon = {
+                if (isDateAddedSelected) {
+                    if (shouldShowDescIcon) {
+                        Icon(imageVector = Icons.Rounded.ArrowDownward, contentDescription = "")
+                    } else {
+                        Icon(imageVector = Icons.Rounded.ArrowUpward, contentDescription = "")
+                    }
+                }
+            }
+        )
+        FilterChip(
+            shape = CircleShape,
+            selected = isNameSelected,
+            onClick = {
+                if (initialOrder == SortOrder.NameDesc) {
+                    onChanged(SortOrder.NameAsc)
+                    shouldShowDescIcon = false
+                } else {
+                    onChanged(SortOrder.NameDesc)
+                    shouldShowDescIcon = true
+                }
+            },
+            label = {
+                Text(
+                    text = stringResource(R.string.sort_selector_name),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            trailingIcon = {
+                if (isNameSelected) {
+                    if (shouldShowDescIcon) {
+                        Icon(imageVector = Icons.Rounded.ArrowDownward, contentDescription = "")
+                    } else {
+                        Icon(imageVector = Icons.Rounded.ArrowUpward, contentDescription = "")
+                    }
+                }
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun OrderSelectorPreview() {
+    OrderSelector(
+        modifier = Modifier.fillMaxWidth(),
+        initialOrder = SortOrder.DateAddedAsc
+    ) {
+    }
+}
+
 @Preview
 @Composable
 private fun SongsScreenPreview() {
@@ -235,7 +339,7 @@ private fun SongsScreenPreview() {
                 )
             )
         )
-    SongsScreen(songsScreenState = state, modifier = Modifier.fillMaxSize()) {
-    }
+    SongsScreen(songsScreenState = state, modifier = Modifier.fillMaxSize(),
+        onOrder = {}, onTrackClick = {}, order = SortOrder.DateAddedDesc)
 }
 

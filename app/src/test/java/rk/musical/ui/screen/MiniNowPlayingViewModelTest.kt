@@ -6,16 +6,18 @@ import org.junit.Before
 import org.junit.Test
 import rk.core.player.MusicalRemote
 import rk.musical.data.model.Song
+import rk.ui.nowplaying.collapsed.CollapsedNowPlayingUiState
+import rk.ui.nowplaying.collapsed.MiniNowPlayingViewModel
 
-class CollapsedNowPlayingViewModelTest {
+class MiniNowPlayingViewModelTest {
 
-    lateinit var viewModel: CollapsedNowPlayingViewModel
+    lateinit var viewModel: MiniNowPlayingViewModel
     lateinit var mockedMusicalRemote: MusicalRemote
 
     @Before
     fun setup() {
         mockedMusicalRemote = mockk(relaxed = true)
-        viewModel = CollapsedNowPlayingViewModel(mockedMusicalRemote)
+        viewModel = MiniNowPlayingViewModel(mockedMusicalRemote)
     }
 
     @Test

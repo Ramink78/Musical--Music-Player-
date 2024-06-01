@@ -11,4 +11,5 @@
     <string name="write_the_lyric">Write the lyric</string>
     <string name="sort_selector_date_added">Date Added</string>
     <string name="sort_selector_name">Name</string>
+    <string name="playlist">Playlist</string>
 </resources>

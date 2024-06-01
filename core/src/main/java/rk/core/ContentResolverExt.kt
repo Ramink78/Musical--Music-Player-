@@ -31,3 +31,26 @@ suspend fun ContentResolver.coUery(
     }
 
 }
+suspend fun ContentResolver.coUery(
+    uri: Uri,
+    columns: Array<String>? = null,
+    selection: String? = null,
+    selectionArgs: Array<String>? = null,
+    sortOrder: String? = null,
+    cancellationSignal: CancellationSignal? = null,
+    coroutineDispatcher: CoroutineDispatcher,
+
+    ): Cursor? {
+    return withContext(coroutineDispatcher) {
+        query(
+            uri,
+            columns,
+            selection,
+            selectionArgs,
+            sortOrder,
+            cancellationSignal
+        )
+
+    }
+
+}

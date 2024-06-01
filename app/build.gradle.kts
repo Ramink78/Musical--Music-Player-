@@ -96,6 +96,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":feature:nowPlaying"))
     implementation(project(":feature:songs"))
+    implementation(project(":feature:playlist"))
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.hilt.android)

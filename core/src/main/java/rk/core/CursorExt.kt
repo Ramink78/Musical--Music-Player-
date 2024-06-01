@@ -36,3 +36,10 @@ val Cursor.albumNameColumnIndex
 val Cursor.albumSongsCountColumnIndex: Int
     get() =
         getColumnIndexOrThrow(ALBUM_SONGS_COUNT)
+
+val Cursor.playlistIdColumnIndex: Int
+    get() = getColumnIndexOrThrow(PLAYLIST_ID)
+val Cursor.playlistTitleColumnIndex: Int
+    get() = getColumnIndexOrThrow(PLAYLIST_NAME)
+val Cursor.playlistDateAddedColumnIndex: Int
+    get() = getColumnIndexOrThrow(PLAYLIST_DATE_ADDED)

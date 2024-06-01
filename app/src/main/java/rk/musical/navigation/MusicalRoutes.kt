@@ -4,5 +4,6 @@ enum class MusicalRoutes {
     Songs,
     Albums,
     AlbumDetail,
-    FullNowPlaying
+    FullNowPlaying,
+    Playlist
 }

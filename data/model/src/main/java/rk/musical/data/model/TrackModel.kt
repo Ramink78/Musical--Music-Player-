@@ -1,8 +1,7 @@
-package rk.data.model
+package rk.musical.data.model
 
-
-data class SongMedia(
-    val id: String,
+data class TrackModel(
+    val id: Long,
     val title: String,
     val artist: String,
     val songUri: String,
@@ -11,4 +10,3 @@ data class SongMedia(
     val coverUri: String? = null,
     val albumId: String
 )
-

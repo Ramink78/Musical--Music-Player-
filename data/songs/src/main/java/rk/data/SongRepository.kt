@@ -1,9 +1,10 @@
 package rk.data
 
 import rk.core.SortOrder
-import rk.data.model.SongMedia
+import rk.musical.data.model.TrackModel
 
 interface SongRepository {
-    suspend fun loadSongs(order: SortOrder = SortOrder.DateAddedDesc): List<SongMedia>
-    suspend fun getAlbumSongs(albumId: String): List<SongMedia>
+    suspend fun loadSongs(order: SortOrder = SortOrder.DateAddedDesc): List<TrackModel>
+    suspend fun getSongById(songId: Long): TrackModel?
+    suspend fun getAlbumSongs(albumId: String): List<TrackModel>
 }

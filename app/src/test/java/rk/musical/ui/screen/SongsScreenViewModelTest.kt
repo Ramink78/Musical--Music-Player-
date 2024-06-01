@@ -8,8 +8,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import rk.core.player.MusicalRemote
-import rk.domain.SongsUseCase
 import rk.musical.data.model.Song
+import rk.musical.domain.GetAllTracks
 import rk.ui.songs.SongsScreenUiState
 import rk.ui.songs.SongsScreenViewModel
 
@@ -17,7 +17,7 @@ class SongsScreenViewModelTest {
     lateinit var viewModel: SongsScreenViewModel
     lateinit var mockedSongsRepository: SongRepository
     lateinit var mockedMusicalRemote: MusicalRemote
-    lateinit var mockedSongsUseCase: SongsUseCase
+    lateinit var mockedGetAllSongsUseCase: GetAllTracks
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
@@ -27,7 +27,11 @@ class SongsScreenViewModelTest {
         mockedSongsRepository = mockk()
         mockedMusicalRemote = mockk(relaxed = true)
         viewModel =
-            SongsScreenViewModel(mockedSongsRepository, mockedSongsUseCase, mockedMusicalRemote)
+            SongsScreenViewModel(
+                mockedSongsRepository,
+                mockedGetAllSongsUseCase,
+                mockedMusicalRemote
+            )
     }
 
     @Test

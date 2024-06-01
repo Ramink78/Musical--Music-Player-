@@ -17,14 +17,15 @@ import rk.core.songDurationColumnIndex
 import rk.core.songIdColumnIndex
 import rk.core.songNameColumnIndex
 import rk.core.toSortClause
-import rk.data.model.SongMedia
+import rk.musical.data.model.TrackModel
 
 internal class LocalSongRepository(
     private val context: Context,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : SongRepository {
-    override suspend fun loadSongs(order: SortOrder): List<SongMedia> {
-        val tempList = mutableListOf<SongMedia>()
+    private var cachedTracks = listOf<TrackModel>()
+    override suspend fun loadSongs(order: SortOrder): List<TrackModel> {
+        val tempList = mutableListOf<TrackModel>()
         context.contentResolver.coUery(
             uri = SONGS_URI,
             columns = songColumns,
@@ -44,8 +45,8 @@ internal class LocalSongRepository(
                         val songUri = ContentUris.withAppendedId(SONGS_URI, songId)
                         val albumId = cursor.getLong(albumIdCol).toString()
                         tempList.add(
-                            SongMedia(
-                                id = songId.toString(),
+                            TrackModel(
+                                id = songId,
                                 title = cursor.getString(titleCol),
                                 artist = cursor.getString(artistCol),
                                 songUri = songUri.toString(),
@@ -56,18 +57,24 @@ internal class LocalSongRepository(
                             )
                         )
                     }
+                    cachedTracks = tempList
                 }
             }
         )
-
 
         return tempList
 
 
     }
 
-    override suspend fun getAlbumSongs(albumId: String): List<SongMedia> {
-        val tempList = mutableListOf<SongMedia>()
+    override suspend fun getSongById(songId: Long): TrackModel? {
+        if (cachedTracks.isEmpty())
+            loadSongs(SortOrder.DateAddedDesc)
+        return cachedTracks.find { it.id == songId }
+    }
+
+    override suspend fun getAlbumSongs(albumId: String): List<TrackModel> {
+        val tempList = mutableListOf<TrackModel>()
         context.contentResolver.coUery(
             uri = SONGS_URI,
             columns = songColumns,
@@ -85,8 +92,8 @@ internal class LocalSongRepository(
                         val songId = cursor.getLong(idCol)
                         val songUri = ContentUris.withAppendedId(SONGS_URI, songId)
                         tempList.add(
-                            SongMedia(
-                                id = songId.toString(),
+                            TrackModel(
+                                id = songId,
                                 title = cursor.getString(titleCol),
                                 artist = cursor.getString(artistCol),
                                 songUri = songUri.toString(),

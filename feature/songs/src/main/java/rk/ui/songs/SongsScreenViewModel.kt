@@ -1,6 +1,5 @@
 package rk.ui.songs
 
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -12,20 +11,16 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import rk.core.ALBUM_ID
-import rk.core.SONG_DURATION
 import rk.core.SortOrder
-import rk.core.buildSongMediaItem
 import rk.core.player.MusicalRemote
-import rk.domain.SongsUseCase
-import rk.domain.model.Track
+import rk.musical.domain.GetAllTracks
 import javax.inject.Inject
 
 @HiltViewModel
 class SongsScreenViewModel
 @Inject
 constructor(
-    private val songsUseCase: SongsUseCase,
+    private val getAllTracks: GetAllTracks,
     private val musicalRemote: MusicalRemote
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SongsScreenUiModel())
@@ -35,17 +30,10 @@ constructor(
 
     val playingSongFlow = musicalRemote.playingMediaItemFlow.onEach {
         it?.let { mediaItem ->
+
             _uiState.update { uiModel ->
                 uiModel.copy(
-                    currentTrack = Track(
-                        id = mediaItem.mediaId,
-                        albumName = mediaItem.mediaMetadata.albumTitle.toString(),
-                        artist = mediaItem.mediaMetadata.artist.toString(),
-                        duration = mediaItem.mediaMetadata.extras?.getLong(SONG_DURATION) ?: 0L,
-                        albumId = mediaItem.mediaMetadata.extras?.getString(ALBUM_ID) ?: "",
-                        songUri = mediaItem.localConfiguration?.uri.toString(),
-                        title = mediaItem.mediaMetadata.artist.toString()
-                    )
+                    currentTrack = mediaItem.toTrack()
                 )
             }
         }
@@ -61,30 +49,19 @@ constructor(
         }
         musicalRemote.playSong(index)
     }
-    fun loadSongs(order: SortOrder = SortOrder.DateAddedDesc) {
+    fun loadSongs(order: SortOrder) {
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val loadedSongs = songsUseCase.loadSongs(order = order)
-            if (loadedSongs.isEmpty()) {
+            val loadedTracks = getAllTracks(order)
+            if (loadedTracks.isEmpty()) {
                 _uiState.update { it.copy(isLoading = false, isEmpty = true) }
             } else {
-                currentMediaItems = loadedSongs.map { track ->
-                    buildSongMediaItem(
-                        songId = track.id,
-                        albumId = track.albumId,
-                        albumName = track.albumName,
-                        songUri = track.songUri.toUri(),
-                        artist = track.artist,
-                        duration = track.duration,
-                        title = track.title,
-                        coverUri = track.coverUri?.toUri()
-                    )
-                }
+                currentMediaItems = loadedTracks.toMediaItems()
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         isEmpty = false,
-                        tracks = loadedSongs,
+                        tracks = loadedTracks,
                         sortOrder = order
                     )
                 }

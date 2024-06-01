@@ -1,13 +1,8 @@
 package rk.ui.songs
 
 import rk.core.SortOrder
-import rk.domain.model.Track
+import rk.musical.domain.model.Track
 
-sealed interface SongsScreenState {
-    data object Loading : SongsScreenState
-    data object Empty : SongsScreenState
-    data class Loaded(val tracks: List<Track>, val sortOrder: SortOrder) : SongsScreenState
-}
 
 data class SongsScreenUiModel(
     val isLoading: Boolean = true,

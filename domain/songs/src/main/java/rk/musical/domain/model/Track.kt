@@ -1,26 +1,26 @@
-package rk.domain.model
+package rk.musical.domain.model
 
-import rk.data.model.SongMedia
+import rk.musical.data.model.TrackModel
 
 data class Track(
-    val id: String,
+    val id: Long,
     val title: String,
     val artist: String,
+    val coverUri: String?,
     val songUri: String,
     val albumName: String,
     val duration: Long,
-    val coverUri: String? = null,
-    val albumId: String
+    val albumId: String,
 )
 
-fun SongMedia.toTrack() =
+fun TrackModel.toTrack() =
     Track(
         id = id,
         title = title,
         artist = artist,
+        coverUri = coverUri,
         songUri = songUri,
         albumName = albumName,
         duration = duration,
-        coverUri = coverUri,
-        albumId = albumId,
+        albumId = albumId
     )

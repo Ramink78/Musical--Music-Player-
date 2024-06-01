@@ -9,12 +9,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import rk.domain.AlbumsUseCase
-import rk.domain.SongsUseCase
 import rk.musical.data.FavoriteRepository
 import rk.musical.data.LyricRepository
 import rk.musical.data.MediaItemTreeImpl
 import rk.musical.data.db.LyricDao
 import rk.musical.data.db.MusicalDatabase
+import rk.musical.domain.GetAllTracks
 import rk.playbackservice.MediaItemTree
 
 @Module
@@ -66,10 +66,10 @@ object AppModule {
     @Provides
     fun provideMediaItemTree(
         albumsUseCase: AlbumsUseCase,
-        songsUseCase: SongsUseCase,
+        getAllSongsUseCase: GetAllTracks,
         favoriteRepository: FavoriteRepository
     ): MediaItemTree =
-        MediaItemTreeImpl(albumsUseCase, songsUseCase, favoriteRepository)
+        MediaItemTreeImpl(albumsUseCase, getAllSongsUseCase, favoriteRepository)
 
     @Provides
     fun provideFavoriteDao(db: MusicalDatabase) =

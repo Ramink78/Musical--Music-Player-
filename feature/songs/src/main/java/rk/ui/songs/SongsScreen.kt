@@ -51,7 +51,7 @@ import rk.core.component.CoverImage
 import rk.core.component.Loading
 import rk.core.component.TrackPlaceholder
 import rk.core.component.coverImageThumbnailSize
-import rk.domain.model.Track
+import rk.musical.domain.model.Track
 
 @Composable
 fun SongsScreen(modifier: Modifier = Modifier) {
@@ -59,7 +59,7 @@ fun SongsScreen(modifier: Modifier = Modifier) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     viewModel.playingSongFlow.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
-        viewModel.loadSongs()
+        viewModel.loadSongs(SortOrder.DateAddedDesc)
     }
     SongsScreen(
         songsScreenState = uiState,
@@ -108,7 +108,7 @@ internal fun SongsScreen(
 internal fun SongsList(
     tracks: ImmutableList<Track>,
     modifier: Modifier = Modifier,
-    playingTrackId: String?,
+    playingTrackId: Long?,
     onTrackClick: (Int) -> Unit,
     onOrder: (SortOrder) -> Unit,
     initialOrder: SortOrder
@@ -329,13 +329,15 @@ private fun SongsScreenPreview() {
             isEmpty = false,
             tracks = listOf(
                 Track(
-                    "",
-                    "Title",
-                    "Artist",
-                    "",
-                    "",
-                    0L,
-                    "", ""
+                    id = 2498,
+                    title = "equidem",
+                    artist = "aliquid",
+                    coverUri = null,
+                    songUri = "rutrum",
+                    albumName = "Derrick Ramirez",
+                    duration = 6401,
+                    albumId = "alienum"
+
                 )
             )
         )

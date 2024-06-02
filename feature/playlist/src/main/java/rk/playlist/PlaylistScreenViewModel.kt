@@ -32,7 +32,7 @@ class PlaylistScreenViewModel @Inject constructor(
     fun getPlaylistTracks(playlistId: Long) {
         uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            playlistTracksUseCase.getPlaylistTracks(playlistId)
+            playlistTracksUseCase(playlistId)
         }
     }
 }

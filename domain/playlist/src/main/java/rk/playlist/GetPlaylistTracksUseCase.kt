@@ -10,7 +10,7 @@ class GetPlaylistTracksUseCase @Inject constructor(
     private val songsRepository: SongRepository,
 ) {
 
-    suspend fun getPlaylistTracks(playlistId: Long): List<PlaylistTrack> {
+    suspend operator fun invoke(playlistId: Long): List<PlaylistTrack> {
         val playlistTracks = mutableListOf<PlaylistTrack>()
         val membersId = playlistRepository.getPlaylistMembersIds(playlistId)
         membersId.forEach { id ->

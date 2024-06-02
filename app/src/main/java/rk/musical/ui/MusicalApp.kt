@@ -37,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import rk.musical.R
 import rk.musical.navigation.MusicalRoutes
+import rk.musical.playlist.detail.PlaylistDetailScreen
 import rk.musical.ui.screen.AlbumDetailScreen
 import rk.musical.ui.screen.AlbumsScreen
 import rk.playlist.PlaylistScreen
@@ -140,7 +141,19 @@ fun MusicalApp() {
                 )
             }
             composable(route = MusicalRoutes.Playlist.name) {
-                PlaylistScreen(modifier = Modifier.fillMaxSize())
+                PlaylistScreen(modifier = Modifier.fillMaxSize()) { playlistId ->
+                    navController.navigate(
+                        "${MusicalRoutes.PlaylistDetail.name}/$playlistId"
+                    )
+                }
+            }
+            composable(
+                route = "${MusicalRoutes.PlaylistDetail.name}/{playlistId}",
+                listOf(
+                    navArgument("playlistId") { type = NavType.LongType }
+                )
+            ) {
+                PlaylistDetailScreen(playlistId = it.arguments?.getLong("playlistId") ?: 0)
             }
         }
     }

@@ -32,7 +32,10 @@ import rk.core.component.coverImageThumbnailSize
 import rk.model.Playlist
 
 @Composable
-fun PlaylistScreen(modifier: Modifier = Modifier) {
+fun PlaylistScreen(
+    modifier: Modifier = Modifier,
+    onClick: (playlistId: Long) -> Unit
+) {
     val viewModel: PlaylistScreenViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = Unit) {
@@ -41,9 +44,7 @@ fun PlaylistScreen(modifier: Modifier = Modifier) {
     Playlists(
         modifier = modifier,
         playlists = uiState.playlists,
-        onClick = {
-            viewModel.getPlaylistTracks(it)
-        }
+        onClick = onClick
     )
 }
 
@@ -94,7 +95,9 @@ internal fun PlaylistItem(
         )
         Column(
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = Padding.s)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Padding.s)
         ) {
             Text(text = playlist.title)
         }

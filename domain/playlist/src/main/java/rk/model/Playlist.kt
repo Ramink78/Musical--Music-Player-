@@ -6,12 +6,14 @@ import rk.musical.data.model.PlaylistModel
 data class Playlist(
     val id: Int,
     val title: String,
-    val createdAt: String
+    val createdAt: String,
+    val coverUri: String?
 )
 
 fun PlaylistModel.toPlaylist() =
     Playlist(
         id = id,
         title = title,
-        createdAt = createdAt
+        createdAt = createdAt,
+        coverUri = null
     )

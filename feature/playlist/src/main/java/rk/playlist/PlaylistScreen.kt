@@ -1,18 +1,16 @@
 package rk.playlist
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import rk.core.Padding
 import rk.core.component.CoverImage
 import rk.core.component.PlaylistPlaceholder
-import rk.core.component.coverImageThumbnailSize
+import rk.core.component.coverImageOriginalSize
 import rk.model.Playlist
 
 @Composable
@@ -54,16 +52,21 @@ internal fun Playlists(
     playlists: List<Playlist>,
     onClick: (playlistId: Long) -> Unit
 ) {
-    LazyColumn(
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
         modifier = modifier,
         contentPadding = WindowInsets.statusBars.asPaddingValues()
     ) {
         items(
             items = playlists,
-            key = { it.id }
+            key = {
+                it.id
+            }
         ) {
-            PlaylistItem(playlist = it, onClick = onClick)
+            PlaylistItem(playlist = it, onClick = onClick, coverUri = it.coverUri)
+
         }
+
     }
 }
 
@@ -74,33 +77,28 @@ internal fun PlaylistItem(
     playlist: Playlist,
     onClick: (playlistId: Long) -> Unit
 ) {
-    Row(
+    Column(
         modifier = modifier
+            .padding(Padding.s)
             .clickable {
                 onClick(playlist.id.toLong())
             },
-        verticalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CoverImage(
-            coverUri = coverUri, size = coverImageThumbnailSize,
+            coverUri = coverUri, size = coverImageOriginalSize,
             placeholder = {
                   PlaylistPlaceholder()
             },
             modifier = Modifier
-                .width(60.dp)
-                .height(60.dp)
-                .padding(Padding.xs)
+                .padding(vertical = Padding.s)
+                .width(120.dp)
+                .height(120.dp)
                 .clip(CircleShape)
 
         )
-        Column(
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Padding.s)
-        ) {
             Text(text = playlist.title)
-        }
+
 
     }
 
@@ -112,7 +110,7 @@ private fun PlaylistItemPreview() {
     PlaylistItem(
         coverUri = "",
         onClick = {},
-        playlist = Playlist(id = 5147, title = "quod", createdAt = "auctor")
+        playlist = Playlist(id = 5147, title = "quod", createdAt = "auctor", coverUri = null)
     )
 
 }

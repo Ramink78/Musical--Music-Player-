@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import rk.model.PlaylistTrack
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,7 +19,16 @@ class PlaylistScreenViewModel @Inject constructor(
     fun loadPlaylists() {
         uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val playlists = playlistsUseCase.getAllPlaylists()
+            val playlists = playlistsUseCase.getAllPlaylists().map {
+                val playlistTracks = getPlaylistTracks(it.id.toLong())
+                it.copy(
+                    coverUri =
+                    if (playlistTracks.isEmpty())
+                        null
+                    else
+                        playlistTracks.first().coverUri
+                )
+            }
             uiState.update {
                 it.copy(
                     isLoading = false, isEmpty = playlists.isEmpty(), playlists = playlists
@@ -29,10 +39,9 @@ class PlaylistScreenViewModel @Inject constructor(
 
     }
 
-    fun getPlaylistTracks(playlistId: Long) {
+    private suspend fun getPlaylistTracks(playlistId: Long): List<PlaylistTrack> {
         uiState.update { it.copy(isLoading = true) }
-        viewModelScope.launch {
-            playlistTracksUseCase(playlistId)
-        }
+        return playlistTracksUseCase(playlistId)
+
     }
 }

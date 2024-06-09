@@ -1,5 +1,8 @@
 package rk.musical.domain
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import rk.core.SortOrder
 import rk.data.SongRepository
 import rk.musical.domain.model.Track
@@ -11,5 +14,10 @@ class GetAllTracks @Inject constructor(
 ) {
     suspend operator fun invoke(sortOrder: SortOrder): List<Track> {
         return songRepository.loadSongs(sortOrder).map { it.toTrack() }
+    }
+    suspend fun getSongsFlow(sortOrder: SortOrder): Flow<List<Track>> {
+        return songRepository.getSongsFlow(sortOrder).map { trackModels ->
+            trackModels.map { it.toTrack() }
+        }
     }
 }

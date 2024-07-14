@@ -34,9 +34,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import rk.musical.R
 import rk.musical.albums.AlbumsScreen
+import rk.musical.feature.albumDetail.AlbumDetailScreen
 import rk.musical.navigation.MusicalRoutes
 import rk.musical.playlist.detail.PlaylistDetailScreen
-import rk.musical.ui.screen.AlbumDetailScreen
 import rk.playlist.PlaylistScreen
 import rk.ui.nowplaying.collapsed.MiniNowPlaying
 import rk.ui.nowplaying.expanded.FullNowPlayingScreen
@@ -120,7 +120,12 @@ fun MusicalApp() {
                 AlbumsScreen(
                     modifier = Modifier
                         .fillMaxSize(),
-                    contentPadding = innerPadding
+                    contentPadding = innerPadding,
+                    onAlbumClicked = { albumId ->
+                        navController.navigate(
+                            "${MusicalRoutes.AlbumDetail.name}/$albumId"
+                        )
+                    }
                 )
             }
             composable(
@@ -131,7 +136,7 @@ fun MusicalApp() {
                 )
             ) {
                 AlbumDetailScreen(
-                    it.arguments?.getString("albumId") ?: ""
+                    albumId = it.arguments?.getString("albumId") ?: ""
                 )
             }
             composable(route = MusicalRoutes.Playlist.name) {

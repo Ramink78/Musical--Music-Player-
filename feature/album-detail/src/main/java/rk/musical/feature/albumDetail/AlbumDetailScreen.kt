@@ -1,4 +1,4 @@
-package rk.musical.ui.screen
+package rk.musical.feature.albumDetail
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
@@ -35,15 +35,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import rk.core.component.AlbumPlaceholder
 import rk.core.component.CoverImage
 import rk.core.component.Loading
 import rk.core.component.coverImageOriginalSize
-import rk.musical.data.model.Song
-import rk.musical.ui.component.AlbumPlaceholder
-import rk.musical.ui.theme.MusicalTheme
 
 @Composable
-private fun AlbumDetailScreen(albumId: String) {
+fun AlbumDetailScreen(albumId: String) {
     val viewModel: AlbumDetailScreenViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -67,24 +65,24 @@ private fun AlbumDetailScreen(albumId: String) {
                                 .fillMaxWidth()
                                 .aspectRatio(1f)
                                 .clip(RoundedCornerShape(bottomStart = 18.dp, bottomEnd = 18.dp)),
-                            coverUri = state.album.coverUri
+                            coverUri = state.members.first().coverUri
                         )
                     }
                     item {
                         AlbumInfo(
-                            title = state.album.title,
-                            subtitle = state.album.artist,
+                            title = state.members.first().albumName,
+                            subtitle = state.members.first().artist,
                             modifier = Modifier.padding(16.dp)
                         )
                     }
 
-                    itemsIndexed(state.children) { index, item ->
+                    itemsIndexed(state.members) { index, item ->
                         AlbumChildItem(
                             modifier = Modifier.padding(horizontal = 8.dp),
-                            song = item,
+                            title = item.title,
                             onItemClick = { viewModel.playSong(index) },
                             ordinal = index + 1,
-                            isChecked = playingSong == item
+                            isChecked = item.id.toString() == playingSong?.mediaId
                         )
                     }
                 }
@@ -143,7 +141,7 @@ private fun AlbumHeader(
 @Composable
 private fun AlbumChildItem(
     modifier: Modifier = Modifier,
-    song: Song = Song.Empty,
+    title: String,
     ordinal: Int = 1,
     isChecked: Boolean = false,
     onItemClick: () -> Unit
@@ -156,13 +154,14 @@ private fun AlbumChildItem(
             modifier = Modifier.padding(start = 12.dp),
             color = MaterialTheme.colorScheme.primary
         )
-        ChildItem(song = song, onClick = onItemClick, isChecked = isChecked)
+        ChildItem(title = title, onClick = onItemClick, isChecked = isChecked)
     }
 }
 
 @Composable
 fun ChildItem(
-    song: Song,
+    // song: Song,
+    title: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isChecked: Boolean = false
@@ -219,7 +218,7 @@ fun ChildItem(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = song.title,
+                text = title,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 4.dp),
                 maxLines = 1,
@@ -227,7 +226,7 @@ fun ChildItem(
                 color = cardContentColor
             )
             Text(
-                text = song.artist,
+                text = title,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -240,7 +239,7 @@ fun ChildItem(
 @Preview
 @Composable
 fun AlbumDetailPreview() {
-    MusicalTheme(darkTheme = true) {
+    MaterialTheme() {
         AlbumDetailScreen("")
     }
 }

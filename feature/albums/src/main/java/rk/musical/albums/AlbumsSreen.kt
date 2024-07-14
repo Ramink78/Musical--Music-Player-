@@ -37,7 +37,8 @@ import rk.musical.data.model.Album
 @Composable
 fun AlbumsScreen(
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    onAlbumClicked: (albumId: String) -> Unit
 ) {
     val viewModel: AlbumsScreenViewModel = hiltViewModel()
     val uiState = viewModel.uiState
@@ -59,7 +60,7 @@ fun AlbumsScreen(
                 AlbumsList(
                     albums = albums,
                     modifier = modifier,
-                    onAlbumClicked = {},
+                    onAlbumClicked = onAlbumClicked,
                     contentPadding = contentPadding
                 )
             }
@@ -77,7 +78,7 @@ internal fun AlbumsList(
     albums: List<Album>,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
-    onAlbumClicked: (Album) -> Unit
+    onAlbumClicked: (albumId: String) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier,
@@ -92,7 +93,7 @@ internal fun AlbumsList(
         ) {
             AlbumItem(
                 onClick = {
-                    onAlbumClicked(it)
+                    onAlbumClicked(it.id)
                 },
                 title = it.title,
                 subtitle = it.artist,

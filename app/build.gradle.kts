@@ -29,6 +29,7 @@ dependencies {
     implementation(projects.feature.songs)
     implementation(projects.feature.playlist)
     implementation(projects.feature.playlistDetail)
+    implementation(projects.feature.albums)
 
     implementation(projects.playbackService)
     implementation(projects.core)

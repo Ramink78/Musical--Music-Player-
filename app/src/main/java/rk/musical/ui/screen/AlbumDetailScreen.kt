@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import rk.core.component.CoverImage
+import rk.core.component.Loading
 import rk.core.component.coverImageOriginalSize
 import rk.musical.data.model.Song
 import rk.musical.ui.component.AlbumPlaceholder
@@ -91,7 +92,7 @@ fun AlbumDetailScreen(albumId: String) {
 
             AlbumDetailUiState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    LoadingCircle()
+                    Loading()
                 }
             }
         }

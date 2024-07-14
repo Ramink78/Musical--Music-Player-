@@ -4,6 +4,8 @@ import android.content.ContentUris
 import android.content.Context
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import rk.core.ALBUM_ID
 import rk.core.IS_MUSIC_CLAUSE
 import rk.core.SONGS_URI
@@ -12,6 +14,7 @@ import rk.core.albumIdColumnIndex
 import rk.core.albumNameColumnIndex
 import rk.core.artistColumnIndex
 import rk.core.coUery
+import rk.core.observe
 import rk.core.songColumns
 import rk.core.songDurationColumnIndex
 import rk.core.songIdColumnIndex
@@ -24,6 +27,12 @@ internal class LocalSongRepository(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : SongRepository {
     private var cachedTracks = listOf<TrackModel>()
+    override suspend fun getSongsFlow(sortOrder: SortOrder): Flow<List<TrackModel>> {
+        return context.contentResolver.observe(SONGS_URI).map {
+            loadSongs(order = sortOrder)
+        }
+
+    }
     override suspend fun loadSongs(order: SortOrder): List<TrackModel> {
         val tempList = mutableListOf<TrackModel>()
         context.contentResolver.coUery(

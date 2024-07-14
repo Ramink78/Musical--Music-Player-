@@ -52,20 +52,22 @@ constructor(
     fun loadSongs(order: SortOrder) {
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val loadedTracks = getAllTracks(order)
-            if (loadedTracks.isEmpty()) {
-                _uiState.update { it.copy(isLoading = false, isEmpty = true) }
-            } else {
-                currentMediaItems = loadedTracks.toMediaItems()
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        isEmpty = false,
-                        tracks = loadedTracks,
-                        sortOrder = order
-                    )
+            getAllTracks.getSongsFlow(order).collect { loadedTracks ->
+                if (loadedTracks.isEmpty()) {
+                    _uiState.update { it.copy(isLoading = false, isEmpty = true) }
+                } else {
+                    currentMediaItems = loadedTracks.toMediaItems()
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isEmpty = false,
+                            tracks = loadedTracks,
+                            sortOrder = order
+                        )
+                    }
                 }
             }
+
         }
     }
 }

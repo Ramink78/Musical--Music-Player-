@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.rounded.QueueMusic
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -36,8 +37,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import rk.musical.R
 import rk.musical.navigation.MusicalRoutes
+import rk.musical.playlist.detail.PlaylistDetailScreen
 import rk.musical.ui.screen.AlbumDetailScreen
 import rk.musical.ui.screen.AlbumsScreen
+import rk.playlist.PlaylistScreen
 import rk.ui.nowplaying.collapsed.MiniNowPlaying
 import rk.ui.nowplaying.expanded.FullNowPlayingScreen
 import rk.ui.songs.SongsScreen
@@ -72,6 +75,18 @@ fun MusicalApp() {
                 }
             }
         }
+    val navigateToPlaylistScreen =
+        remember {
+            {
+                navController.navigate(MusicalRoutes.Playlist.name) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        }
     Scaffold(
         bottomBar = {
             MusicalBottomBar(
@@ -81,7 +96,8 @@ fun MusicalApp() {
                 isVisible = currentRoute != MusicalRoutes.FullNowPlaying.name,
                 onMiniPlayerClick = {
                     navController.navigate(MusicalRoutes.FullNowPlaying.name)
-                }
+                },
+                onPlaylistSelected = navigateToPlaylistScreen
             )
         }
     ) { innerPadding ->
@@ -93,9 +109,11 @@ fun MusicalApp() {
         ) {
             composable(route = MusicalRoutes.Songs.name) {
                 SongsScreen(
-                    modifier = Modifier.fillMaxSize().padding(
-                        bottom = innerPadding.calculateBottomPadding()
-                    )
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            bottom = innerPadding.calculateBottomPadding()
+                        )
                 )
             }
             composable(route = MusicalRoutes.FullNowPlaying.name) {
@@ -122,6 +140,21 @@ fun MusicalApp() {
                     it.arguments?.getString("albumId") ?: ""
                 )
             }
+            composable(route = MusicalRoutes.Playlist.name) {
+                PlaylistScreen(modifier = Modifier.fillMaxSize()) { playlistId ->
+                    navController.navigate(
+                        "${MusicalRoutes.PlaylistDetail.name}/$playlistId"
+                    )
+                }
+            }
+            composable(
+                route = "${MusicalRoutes.PlaylistDetail.name}/{playlistId}",
+                listOf(
+                    navArgument("playlistId") { type = NavType.LongType }
+                )
+            ) {
+                PlaylistDetailScreen(playlistId = it.arguments?.getLong("playlistId") ?: 0)
+            }
         }
     }
 }
@@ -133,7 +166,8 @@ fun MusicalBottomBar(
     onSelectedAlbums: () -> Unit,
     onSelectedSongs: () -> Unit,
     isVisible: Boolean = true,
-    onMiniPlayerClick: () -> Unit
+    onMiniPlayerClick: () -> Unit,
+    onPlaylistSelected: () -> Unit
 ) {
     AnimatedVisibility(
         visible = isVisible,
@@ -191,6 +225,33 @@ fun MusicalBottomBar(
                             text = stringResource(R.string.albums),
                             style =
                             if (currentRoute == MusicalRoutes.Albums.name) {
+                                MaterialTheme.typography.headlineMedium.copy(fontSize = 14.sp)
+                            } else {
+                                MaterialTheme.typography.bodyMedium
+                            }
+                        )
+                    }
+                )
+
+                NavigationBarItem(
+                    selected = currentRoute == MusicalRoutes.Playlist.name,
+                    onClick = onPlaylistSelected,
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Rounded.QueueMusic,
+                            contentDescription = stringResource(R.string.playlist)
+                        )
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        selectedIconColor = MaterialTheme.colorScheme.surface,
+                        indicatorColor = MaterialTheme.colorScheme.primary
+                    ),
+                    label = {
+                        Text(
+                            text = stringResource(R.string.playlist),
+                            style =
+                            if (currentRoute == MusicalRoutes.Playlist.name) {
                                 MaterialTheme.typography.headlineMedium.copy(fontSize = 14.sp)
                             } else {
                                 MaterialTheme.typography.bodyMedium

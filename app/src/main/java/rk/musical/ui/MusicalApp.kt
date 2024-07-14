@@ -5,11 +5,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -21,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -96,21 +95,20 @@ fun MusicalApp() {
                 },
                 onPlaylistSelected = navigateToPlaylistScreen
             )
-        }
+        },
+        containerColor = Color.Transparent
     ) { innerPadding ->
         NavHost(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background),
+            modifier = Modifier,
             navController = navController,
             startDestination = MusicalRoutes.Songs.name
         ) {
             composable(route = MusicalRoutes.Songs.name) {
                 SongsScreen(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            bottom = innerPadding.calculateBottomPadding()
-                        )
+                        .fillMaxSize(),
+                    contentPaddingValues = innerPadding
+
                 )
             }
             composable(route = MusicalRoutes.FullNowPlaying.name) {

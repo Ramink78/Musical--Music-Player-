@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -80,10 +79,10 @@ internal fun MiniNowPlaying(
         modifier =
         modifier
             .fillMaxWidth()
-            .background(
-                backgroundColor,
+            .clip(
                 shape = RoundedCornerShape(topStart = radius, topEnd = radius)
             )
+            .background(backgroundColor)
             .clickable { onClick() }
             .padding(horizontal = 8.dp)
             .height(64.dp)

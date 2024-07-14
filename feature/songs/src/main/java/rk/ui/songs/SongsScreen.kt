@@ -5,14 +5,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -54,7 +52,10 @@ import rk.core.component.coverImageThumbnailSize
 import rk.musical.domain.model.Track
 
 @Composable
-fun SongsScreen(modifier: Modifier = Modifier) {
+fun SongsScreen(
+    modifier: Modifier = Modifier,
+    contentPaddingValues: PaddingValues = PaddingValues(0.dp)
+) {
     val viewModel: SongsScreenViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     viewModel.playingSongFlow.collectAsStateWithLifecycle()
@@ -66,7 +67,8 @@ fun SongsScreen(modifier: Modifier = Modifier) {
         onTrackClick = viewModel::playSong,
         onOrder = viewModel::loadSongs,
         modifier = modifier,
-        order = uiState.sortOrder
+        order = uiState.sortOrder,
+        contentPaddingValues = contentPaddingValues
     )
 
 
@@ -78,7 +80,8 @@ internal fun SongsScreen(
     songsScreenState: SongsScreenUiModel,
     onTrackClick: (Int) -> Unit,
     onOrder: (SortOrder) -> Unit,
-    order: SortOrder
+    order: SortOrder,
+    contentPaddingValues: PaddingValues = PaddingValues(0.dp)
 ) {
     Box(modifier = modifier) {
         when {
@@ -97,7 +100,8 @@ internal fun SongsScreen(
                     playingTrackId = songsScreenState.currentTrack?.id,
                     onTrackClick = onTrackClick,
                     onOrder = onOrder,
-                    initialOrder = order
+                    initialOrder = order,
+                    contentPaddingValues = contentPaddingValues
                 )
             }
         }
@@ -111,12 +115,13 @@ internal fun SongsList(
     playingTrackId: Long?,
     onTrackClick: (Int) -> Unit,
     onOrder: (SortOrder) -> Unit,
-    initialOrder: SortOrder
+    initialOrder: SortOrder,
+    contentPaddingValues: PaddingValues
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier,
-        contentPadding = WindowInsets.statusBars.asPaddingValues()
+        contentPadding = contentPaddingValues
 
     ) {
         item {

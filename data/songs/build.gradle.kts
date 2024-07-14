@@ -35,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":data:model"))
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.core.ktx)

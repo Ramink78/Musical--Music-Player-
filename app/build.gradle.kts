@@ -32,6 +32,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             isDebuggable = true
@@ -93,6 +94,8 @@ dependencies {
     implementation(project(":domain:songs"))
     implementation(project(":domain:albums"))
     implementation(project(":core"))
+    implementation(project(":feature:nowPlaying"))
+    implementation(project(":feature:songs"))
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
     implementation(libs.hilt.android)

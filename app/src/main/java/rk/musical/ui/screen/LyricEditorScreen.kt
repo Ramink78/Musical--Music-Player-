@@ -57,7 +57,7 @@ fun LyricEditorScreen(
             IconButton(onClick = onDismiss) {
                 Icon(imageVector = Icons.Rounded.Close, contentDescription = "")
             }
-            SongItem(song = song, onClick = {})
+            // SongItem(song = song, onClick = {})
             Spacer(modifier = Modifier.height(8.dp))
             LyricCard(
                 modifier =

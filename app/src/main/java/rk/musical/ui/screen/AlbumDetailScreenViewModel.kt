@@ -9,24 +9,23 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import rk.domain.SongsUseCase
+import rk.core.player.MusicalRemote
 import rk.domain.model.Album
 import rk.musical.data.model.Song
-import rk.musical.player.MusicalRemote
+import rk.musical.domain.GetAllTracks
 
 @HiltViewModel
 class AlbumDetailScreenViewModel
 @Inject
 constructor(
-    private val songsUseCase: SongsUseCase,
+    private val getAllSongsUseCase: GetAllTracks,
     private val musicalRemote: MusicalRemote
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<AlbumDetailUiState>(AlbumDetailUiState.Loading)
     val uiState = _uiState.asStateFlow()
     private var currentSongs = emptyList<Song>()
     val playingSong =
-        musicalRemote.playingSongFlow
+        musicalRemote.playingMediaItemFlow
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -35,8 +34,8 @@ constructor(
 
     fun getAlbumChildren(albumId: String) {
         _uiState.update { AlbumDetailUiState.Loading }
-        viewModelScope.launch {
-            val children = songsUseCase.getAlbumSongs(albumId)
+     /*   viewModelScope.launch {
+            val children = getAllSongsUseCase.getAlbumSongs(albumId)
             _uiState.update {
                 val child = children.first()
                 AlbumDetailUiState.Loaded(
@@ -61,12 +60,12 @@ constructor(
                     }.also { currentSongs = it }
                 )
             }
-        }
+        }*/
     }
 
     fun playSong(index: Int) {
         if (musicalRemote.currentPlaylist != currentSongs) {
-            musicalRemote.setPlaylist(currentSongs)
+            // musicalRemote.setPlaylist(currentSongs)
             // hasCurrentPlaylist = true
         }
         musicalRemote.playSong(index)

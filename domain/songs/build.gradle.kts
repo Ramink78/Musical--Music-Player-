@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":core"))
     ksp(libs.hilt.compiler)
     implementation(project(":data:songs"))
+    implementation(project(":data:model"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

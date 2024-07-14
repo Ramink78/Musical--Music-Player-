@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sort_selector_date_added">Date Added</string>
+    <string name="sort_selector_name">Name</string>
+</resources>

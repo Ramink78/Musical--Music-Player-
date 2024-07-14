@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -25,13 +23,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.shouldShowRationale
+import rk.musical.R
 import rk.musical.ui.theme.MusicalTheme
 
 val mediaPermission =
@@ -45,7 +45,7 @@ val mediaPermission =
 fun RationaleWarning(
     onRequest: () -> Unit,
     buttonText: String,
-    icon: ImageVector,
+    iconPainter: Painter,
     rationaleTitle: String,
     rationaleText: String
 ) {
@@ -74,7 +74,7 @@ fun RationaleWarning(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = icon,
+                    painter = iconPainter,
                     contentDescription = "",
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
@@ -125,7 +125,7 @@ fun RationaleWarningPreview() {
             onRequest = {},
             buttonText = "Grant Access",
             rationaleText = "Rationale text",
-            icon = Icons.Rounded.MusicNote,
+            iconPainter = painterResource(id = R.drawable.music_note_24),
             rationaleTitle = "Media Access"
         )
     }

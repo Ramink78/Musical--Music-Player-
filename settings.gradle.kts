@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
@@ -13,6 +14,7 @@ dependencyResolutionManagement {
         maven { url= uri("https://jitpack.io") }    }
 }
 rootProject.name = "Musical"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
 include(":PlaybackService")
 include(":data:songs")
@@ -27,3 +29,4 @@ include(":domain:playlist")
 include(":feature:playlist")
 include(":data:model")
 include(":feature:playlist-detail")
+include(":feature:albums")

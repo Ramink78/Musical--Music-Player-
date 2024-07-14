@@ -3,15 +3,15 @@ package rk.musical.ui.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import rk.musical.R
 
 @Composable
 fun SongPlaceholder(modifier: Modifier = Modifier) {
@@ -24,7 +24,7 @@ fun SongPlaceholder(modifier: Modifier = Modifier) {
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Rounded.MusicNote,
+                painter = painterResource(id = R.drawable.music_note_24),
                 contentDescription = ""
             )
         }
@@ -41,7 +41,7 @@ fun SongDetailPlaceholder(modifier: Modifier = Modifier) {
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Rounded.MusicNote,
+                painter = painterResource(id = R.drawable.music_note_24),
                 contentDescription = "",
                 modifier = Modifier.size(42.dp)
             )

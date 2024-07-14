@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ModeEdit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,7 +59,7 @@ fun LyricContent(
             color = textColor
         )
         IconButton(onClick = onEditClick, modifier = Modifier.align(Alignment.BottomStart)) {
-            Icon(imageVector = Icons.Rounded.ModeEdit, contentDescription = "")
+            Icon(painter = painterResource(id = R.drawable.mode_edit_24), contentDescription = "")
         }
         Box(
             modifier = Modifier
